@@ -55,13 +55,34 @@ class View
      * @param  array                      $data
      * @return View
      */
-    public function __construct(Template\TemplateInterface $template = null, array $data = [])
+    public function __construct(Template\TemplateInterface $template = null, array $data = null)
     {
         if (null !== $template) {
             $this->setTemplate($template);
         }
+        if (null !== $data) {
+            $this->setData($data);
+        }
+    }
 
-        $this->data = $data;
+    /**
+     * Get view template
+     *
+     * @return Template\TemplateInterface
+     */
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    /**
+     * Get all model data
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
     }
 
     /**
@@ -76,26 +97,6 @@ class View
     }
 
     /**
-     * Get all model data
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Get view template
-     *
-     * @return Template\TemplateInterface
-     */
-    public function getTemplate()
-    {
-        return $this->template;
-    }
-
-    /**
      * Set view template
      *
      * @param  Template\TemplateInterface $template
@@ -104,6 +105,18 @@ class View
     public function setTemplate(Template\TemplateInterface $template)
     {
         $this->template = $template;
+        return $this;
+    }
+
+    /**
+     * Set all model data
+     *
+     * @param  array $data
+     * @return View
+     */
+    public function setData(array $data = [])
+    {
+        $this->data = $data;
         return $this;
     }
 
@@ -129,18 +142,6 @@ class View
     public function merge(array $data)
     {
         $this->data = array_merge($this->data, $data);
-        return $this;
-    }
-
-    /**
-     * Set all model data
-     *
-     * @param  array $data
-     * @return View
-     */
-    public function setData(array $data = [])
-    {
-        $this->data = $data;
         return $this;
     }
 
