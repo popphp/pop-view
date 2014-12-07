@@ -51,11 +51,11 @@ class View
      *
      * Instantiate the view object
      *
-     * @param  Template\TemplateInterface $template
-     * @param  array                      $data
+     * @param  mixed $template
+     * @param  array $data
      * @return View
      */
-    public function __construct(Template\TemplateInterface $template = null, array $data = null)
+    public function __construct($template = null, array $data = null)
     {
         if (null !== $template) {
             $this->setTemplate($template);
@@ -99,11 +99,20 @@ class View
     /**
      * Set view template
      *
-     * @param  Template\TemplateInterface $template
+     * @param  mixed $template
      * @return View
      */
-    public function setTemplate(Template\TemplateInterface $template)
+    public function setTemplate($template)
     {
+        if (!($template instanceof Template\TemplateInterface)) {
+            if (((substr($template, -6) == '.phtml') ||
+                    (substr($template, -5) == '.php3') ||
+                    (substr($template, -4) == '.php')) && (file_exists($template))) {
+                $template = new Template\File($template);
+            } else {
+                $template = new Template\Stream($template);
+            }
+        }
         $this->template = $template;
         return $this;
     }
