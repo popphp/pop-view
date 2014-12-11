@@ -161,20 +161,31 @@ class Stream extends AbstractTemplate
                     $outputLoop = '';
                     $i = 0;
                     foreach ($value as $ky => $val) {
+                        // Handle nested array
                         if (is_array($val) || ($val instanceof \ArrayObject)) {
-                            $l = $loop;
-                            foreach ($val as $k => $v) {
-                                // Check is value is stringable
-                                if ((is_object($v) && method_exists($v, '__toString')) || (!is_object($v) && !is_array($v))) {
-                                    $l = str_replace('[{' . $k . '}]', $v, $l);
+                            $s = '[{' . $ky . '}]';
+                            $e = '[{/' . $ky . '}]';
+                            if ((strpos($loop, $s) !== false) && (strpos($loop, $e) !== false)) {
+                                $l = $loop;
+                                $lCode = substr($l, strpos($l, $s));
+                                $lCode = substr($lCode, 0, (strpos($lCode, $e) + strlen($e)));
+
+                                $l = str_replace($s, '', $lCode);
+                                $l = str_replace($e, '', $l);
+                                $oLoop = '';
+                                foreach ($val as $k => $v) {
+                                    // Check is value is stringable
+                                    if ((is_object($v) && method_exists($v, '__toString')) || (!is_object($v) && !is_array($v))) {
+                                        $oLoop .= str_replace(['[{key}]', '[{value}]'], [$k, $v], $l);
+                                    }
                                 }
+                                $outputLoop = str_replace($lCode, $oLoop, $loop);
                             }
-                            $outputLoop .= $l;
+                        // Handle scalar
                         } else {
                             // Check is value is stringable
                             if ((is_object($val) && method_exists($val, '__toString')) || (!is_object($val) && !is_array($val))) {
-                                $replace = (!is_numeric($ky)) ? '[{' . $ky . '}]' : '[{value}]';
-                                $outputLoop .= str_replace($replace, $val, $loop);
+                                $outputLoop .= str_replace(['[{key}]', '[{value}]'], [$ky, $val], $loop);
                             }
                         }
                         $i++;
