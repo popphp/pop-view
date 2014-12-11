@@ -155,25 +155,29 @@ class View
     }
 
     /**
-     * Render the view.
+     * Render and output the view
      *
-     * @param  boolean $ret
+     * @return mixed
+     */
+    public function output()
+    {
+        echo $this->render();
+    }
+
+    /**
+     * Render the view
+     *
      * @throws Exception
      * @return mixed
      */
-    public function render($ret = false)
+    public function render()
     {
         if (null === $this->template) {
             throw new Exception('A template asset has not been assigned.');
         }
 
         $this->output = $this->template->render($this->data);
-
-        if ($ret) {
-            return $this->output;
-        } else {
-            echo $this->output;
-        }
+        return $this->output;
     }
 
     /**
@@ -183,7 +187,7 @@ class View
      */
     public function __toString()
     {
-        return $this->render(true);
+        return $this->render();
     }
 
     /**
