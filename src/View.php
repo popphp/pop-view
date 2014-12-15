@@ -338,7 +338,7 @@ class View implements \ArrayAccess
                 if (isset($filter['params'])) {
                     $params = (!is_array($filter['params'])) ? [$filter['params']] : $filter['params'];
                 }
-                $this->filter($this->data, $filter['call'], $params);
+                $this->applyFilter($this->data, $filter['call'], $params);
             }
         }
     }
@@ -351,7 +351,7 @@ class View implements \ArrayAccess
      * @param  array  $params
      * @return void
      */
-    protected function filter(&$array, $call, $params = [])
+    protected function applyFilter(&$array, $call, $params = [])
     {
         array_walk_recursive($array, function(&$value, $key, $userdata) {
             $params = array_merge([$value], $userdata[1]);
