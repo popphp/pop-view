@@ -111,12 +111,15 @@ class View implements \ArrayAccess
     public function setTemplate($template)
     {
         if (!($template instanceof Template\TemplateInterface)) {
+            // If a native PHP file template
             if (((substr($template, -6) == '.phtml') ||
-                    (substr($template, -5) == '.php3') ||
+                    (substr($template, -5, 4) == '.php') ||
                     (substr($template, -4) == '.php')) && (file_exists($template))) {
                 $template = new Template\File($template);
+            // If a string template, or a string template from a non-PHP file
             } else {
-                $template = new Template\Stream($template);
+                $template = (file_exists($template)) ? new Template\Stream(file_get_contents($template)) :
+                    new Template\Stream($template);
             }
         }
         $this->template = $template;
