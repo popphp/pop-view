@@ -25,7 +25,7 @@ namespace Pop\View;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    2.0.0a
  */
-class View
+class View implements \ArrayAccess
 {
 
     /**
@@ -39,6 +39,12 @@ class View
      * @var array
      */
     protected $data = [];
+
+    /**
+     * Filters
+     * @var array
+     */
+    protected $filters = [];
 
     /**
      * View output string
@@ -130,6 +136,41 @@ class View
     }
 
     /**
+     * Add filter
+     *
+     * @param  mixed $call
+     * @param  mixed $params
+     * @return View
+     */
+    public function addFilter($call, $params = null)
+    {
+        $this->filters[] = [
+            'call'   => $call,
+            'params' => $params
+        ];
+        return $this;
+    }
+
+    /**
+     * Add filters
+     *
+     * @param  array $filters
+     * @throws Exception
+     * @return View
+     */
+    public function addFilters(array $filters)
+    {
+        foreach ($filters as $filter) {
+            if (!isset($filter['call'])) {
+                throw new Exception('Error: The \'call\' key must be set.');
+            }
+            $params = (isset($filter['params'])) ? $filter['params'] : null;
+            $this->addFilter($filter['call'], $params);
+        }
+        return $this;
+    }
+
+    /**
      * Set model data
      *
      * @param  string $name
@@ -175,6 +216,8 @@ class View
         if (null === $this->template) {
             throw new Exception('A template asset has not been assigned.');
         }
+
+        $this->filterData();
 
         $this->output = $this->template->render($this->data);
         return $this->output;
@@ -233,6 +276,87 @@ class View
     public function __unset($name)
     {
         unset($this->data[$name]);
+    }
+
+    /**
+     * ArrayAccess offsetGet
+     *
+     * @param  mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * ArrayAccess offsetSet
+     *
+     * @param  mixed $offset
+     * @param  mixed $value
+     * @throws Exception
+     * @return mixed
+     */
+    public function offsetSet($offset, $value)
+    {
+        return $this->set($offset, $value);
+    }
+
+    /**
+     * ArrayAccess offsetExists
+     *
+     * @param  mixed $offset
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return $this->__isset($offset);
+    }
+
+    /**
+     * ArrayAccess offsetUnset
+     *
+     * @param  mixed $offset
+     * @throws Exception
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        $this->__unset($offset);
+    }
+
+    /**
+     * Filter data
+     *
+     * @return void
+     */
+    protected function filterData()
+    {
+        if (count($this->filters) > 0) {
+            foreach ($this->filters as $filter) {
+                $params = [];
+                if (isset($filter['params'])) {
+                    $params = (!is_array($filter['params'])) ? [$filter['params']] : $filter['params'];
+                }
+                $this->filter($this->data, $filter['call'], $params);
+            }
+        }
+    }
+
+    /**
+     * Execute filter over data
+     *
+     * @param  array  $array
+     * @param  string $call
+     * @param  array  $params
+     * @return void
+     */
+    protected function filter(&$array, $call, $params = [])
+    {
+        array_walk_recursive($array, function(&$value, $key, $userdata) {
+            $params = array_merge([$value], $userdata[1]);
+            $value  = call_user_func_array($userdata[0], $params);
+        }, [$call, $params]);
     }
 
 }
