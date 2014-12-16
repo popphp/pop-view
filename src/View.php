@@ -173,6 +173,17 @@ class View implements \ArrayAccess
     }
 
     /**
+     * Clear filters
+     *
+     * @return View
+     */
+    public function clearFilters()
+    {
+        $this->filters = [];
+        return $this;
+    }
+
+    /**
      * Set model data
      *
      * @param  string $name
@@ -194,6 +205,17 @@ class View implements \ArrayAccess
     public function merge(array $data)
     {
         $this->data = array_merge($this->data, $data);
+        return $this;
+    }
+
+    /**
+     * Filter of data with the filters that have been set
+     *
+     * @return View
+     */
+    public function filter()
+    {
+        $this->filterData();
         return $this;
     }
 
