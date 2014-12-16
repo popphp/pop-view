@@ -41,12 +41,6 @@ class Block
     protected $data = null;
 
     /**
-     * View path
-     * @var string
-     */
-    protected $path = null;
-
-    /**
      * Template blocks
      * @var array
      */
@@ -63,18 +57,15 @@ class Block
      *
      * @param  string $template
      * @param  array  $data
-     * @param  string $path
      * @return Block
      */
-    public function __construct($template, array $data, $path = null)
+    public function __construct($template, array $data)
     {
         $this->setTemplate($template);
         $this->setData($data);
-        $this->setPath($path);
 
         if (self::hasParent($template)) {
-            $parent         = $this->path . DIRECTORY_SEPARATOR . self::getParent($template);
-            $this->parent   = new Block(file_get_contents($parent), $this->data, $this->path);
+            $this->parent   = new Block(file_get_contents(self::getParent($template)), $this->data);
             $this->template = ltrim(substr($this->template, (strpos($this->template, '}') + 1)));
         }
 
@@ -142,18 +133,6 @@ class Block
     }
 
     /**
-     * Set path
-     *
-     * @param  string $path
-     * @return Block
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
-        return $this;
-    }
-
-    /**
      * Get template blocks
      *
      * @return array
@@ -181,16 +160,6 @@ class Block
     public function getData()
     {
         return $this->data;
-    }
-
-    /**
-     * Get path
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
     }
 
     /**

@@ -29,12 +29,6 @@ class Stream extends AbstractTemplate
 {
 
     /**
-     * Template path
-     * @var array
-     */
-    protected $path = null;
-
-    /**
      * Constructor
      *
      * Instantiate the view stream template object
@@ -56,22 +50,11 @@ class Stream extends AbstractTemplate
     public function setTemplate($template)
     {
         if (file_exists($template)) {
-            $this->path     = realpath(dirname($template));
             $this->template = file_get_contents($template);
         } else {
             $this->template = $template;
         }
         return $this;
-    }
-
-    /**
-     * Get template path
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
     }
 
     /**
@@ -96,7 +79,7 @@ class Stream extends AbstractTemplate
     {
         if (null !== $this->data) {
             if (Block::hasBlocks($this->template)) {
-                $block = new Block($this->template, $this->data, $this->path);
+                $block = new Block($this->template, $this->data);
                 $this->template = $block->getTemplate();
             }
 
