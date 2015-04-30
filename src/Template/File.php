@@ -64,7 +64,7 @@ class File extends AbstractTemplate
      * @param  array $data
      * @return string
      */
-    public function render(array $data)
+    public function render(array $data = [])
     {
         $this->data = $data;
         $this->renderTemplate();
