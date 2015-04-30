@@ -38,7 +38,7 @@ abstract class AbstractTemplate implements TemplateInterface
      * View data
      * @var array
      */
-    protected $data = null;
+    protected $data = [];
 
     /**
      * View output string
