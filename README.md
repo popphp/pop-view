@@ -75,7 +75,7 @@ Using includes with a stream template:
 
 ```html
 <!DOCTYPE html>
-<!-- Header //-->
+<!-- header.html //-->
 <html>
 
 <head>
@@ -88,8 +88,8 @@ Using includes with a stream template:
 ```
 
 ```html
-<!-- Footer //-->
-    <footer>This is the footer.</footer>
+<!-- footer.html //-->
+    <footer>This is the footer</footer>
 </body>
 
 </html>
@@ -97,6 +97,7 @@ Using includes with a stream template:
 
 ```html
 {{@include header.html}}
+<!-- index.html //-->
     <h1>[{title}]</h1>
     <p>[{content}]</p>
 {{@include footer.html}}
