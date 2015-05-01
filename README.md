@@ -25,7 +25,7 @@ Using a PHP-file template, 'hello.phtml':
 
 <body>
     <h1><?=$title; ?></h1>
-<?=$content; ?>
+    <p><?=$content; ?></p>
 </body>
 
 </html>
@@ -37,7 +37,7 @@ use Pop\View\Template\File;
 
 $view = new View\View(new View\Template\File('hello.phtml'));
 $view->title   = 'Hello World!';
-$view->content = '<p>This is a test!</p>';
+$view->content = 'This is a test!';
 
 echo $view;
 ```
@@ -54,7 +54,7 @@ Using a basic stream template, 'hello.html':
 
 <body>
     <h1>[{title}]</h1>
-[{content}]
+    <p>[{content}]</p>
 </body>
 
 </html>
@@ -66,7 +66,7 @@ use Pop\View\Template\Stream;
 
 $view = new View\View(new View\Template\Stream('hello.html'));
 $view->title   = 'Hello World!';
-$view->content = '<p>This is a test!</p>';
+$view->content = 'This is a test!';
 
 echo $view;
 ```
