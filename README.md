@@ -226,9 +226,7 @@ Basic conditional logic with a stream template:
 ```php
 use Pop\View;
 
-$data = [
-    'foo' => 'bar'
-];
+$data = ['foo' => 'bar'];
 
 $view = new View\View(new View\Template\Stream('index.html'), $data);
 
