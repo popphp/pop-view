@@ -74,8 +74,8 @@ echo $view;
 Using includes with a stream template:
 
 ```html
-<!DOCTYPE html>
 <!-- header.html //-->
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -96,8 +96,8 @@ Using includes with a stream template:
 ```
 
 ```html
-{{@include header.html}}
 <!-- index.html //-->
+{{@include header.html}}
     <h1>[{title}]</h1>
     <p>[{content}]</p>
 {{@include footer.html}}
