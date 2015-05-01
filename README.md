@@ -113,3 +113,48 @@ $view->content = 'This is a test!';
 
 echo $view;
 ```
+
+Using inheritance with a stream template:
+
+```html
+<!-- parent.html //-->
+<!DOCTYPE html>
+<html>
+
+<head>
+{{header}}
+    <title>[{title}]</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+{{/header}}
+</head>
+
+<body>
+    <h1>[{title}]</h1>
+    [{content}]
+</body>
+
+</html>
+```
+
+```html
+<!-- child.html //-->
+{{@extends parent.html}}
+
+{{header}}
+{{parent}}
+    <style>
+        body { margin: 0; padding: 0; color: #bbb;}
+    </style>
+{{/header}}
+```
+
+```php
+use Pop\View;
+use Pop\View\Template\Stream;
+
+$view = new View\View(new View\Template\Stream('child.html'));
+$view->title   = 'Hello World!';
+$view->content = 'This is a test!';
+
+echo $view;
+```
