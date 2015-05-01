@@ -158,3 +158,79 @@ $view->content = 'This is a test!';
 
 echo $view;
 ```
+
+Basic iteration over an array with a stream template:
+
+```html
+<!-- index.html //-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>[{title}]</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+
+[{items}]
+    <div><strong>[{key}]</strong>: [{value}]</div>
+[{/items}]
+
+</body>
+
+</html>
+```
+
+```php
+use Pop\View;
+
+$data = [
+    'items' => [
+        'hello' => 'world',
+        'foo'   => 'bar',
+        'baz'   => 123
+    ]
+];
+
+$view = new View\View(new View\Template\Stream('index.html'), $data);
+
+echo $view;
+```
+
+Basic conditional logic with a stream template:
+
+```html
+<!-- index.html //-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>[{title}]</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+
+[{if(foo)}]
+    <p>The variable 'foo' is set to [{foo}].</p>
+[{else}]
+    <p>The variable 'foo' is not set.</p>
+[{/if}]
+
+</body>
+
+</html>
+```
+
+```php
+use Pop\View;
+
+$data = [
+    'foo' => 'bar'
+];
+
+$view = new View\View(new View\Template\Stream('index.html'), $data);
+
+echo $view;
+```
