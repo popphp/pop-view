@@ -378,10 +378,8 @@ class View implements \ArrayAccess
     protected function applyFilter(&$array, $call, $params = [])
     {
         array_walk_recursive($array, function(&$value, $key, $userdata) {
-            if (isset($this->data[$key])) {
-                $params = array_merge([$value], $userdata[1]);
-                $value = call_user_func_array($userdata[0], $params);
-            }
+            $params = array_merge([$value], $userdata[1]);
+            $value = call_user_func_array($userdata[0], $params);
         }, [$call, $params]);
     }
 
