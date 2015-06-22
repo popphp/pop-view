@@ -2,6 +2,8 @@ Pop View Component
 ==================
 Part of the Pop PHP Framework (http://github.com/popphp/popphp)
 
+[![Build Status](https://travis-ci.org/popphp/pop-view.svg?branch=master)](https://travis-ci.org/popphp/pop-view)
+
 OVERVIEW
 --------
 Pop View is the view template component that can be used as the "V" in

@@ -291,8 +291,9 @@ class Stream extends AbstractTemplate
             foreach ($matches[0] as $key => $match) {
                 $tmpl = trim($matches[1][$key]);
                 if ($tmpl != $this->file) {
+                    $dir            = ($this->isFile()) ? dirname($this->file) . DIRECTORY_SEPARATOR : null;
                     $this->template = str_replace($match, '', $this->template);
-                    $this->parent   = new Stream($tmpl);
+                    $this->parent   = new Stream($dir . $tmpl);
                 }
             }
         }
@@ -312,7 +313,8 @@ class Stream extends AbstractTemplate
             foreach ($matches[0] as $key => $match) {
                 $tmpl = trim($matches[1][$key]);
                 if ($tmpl != $this->file) {
-                    $view = new Stream($tmpl);
+                    $dir  = ($this->isFile()) ? dirname($this->file) . DIRECTORY_SEPARATOR : null;
+                    $view = new Stream($dir . $tmpl);
                     $this->template = str_replace($match, $view->render($this->data), $this->template);
                 }
             }
