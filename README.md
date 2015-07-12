@@ -1,21 +1,30 @@
-Pop View Component
-==================
-Part of the Pop PHP Framework (http://github.com/popphp/popphp)
+pop-view
+========
 
 [![Build Status](https://travis-ci.org/popphp/pop-view.svg?branch=master)](https://travis-ci.org/popphp/pop-view)
 
 OVERVIEW
 --------
-Pop View is the view template component that can be used as the "V" in
-an MVC stack or independently as well. It supports using both PHP-file
-based templates and stream templates. Within the stream templates, there
-is basic support for logic and iteration for dynamic control over
-the view template.
+`pop-view` is the view template component that can be used as the "V" in an MVC stack or
+independently as well. It supports using both PHP-file based templates and stream templates.
+Within the stream templates, there is basic support for logic and iteration for dynamic
+control over the view template.
 
-QUICK USE
----------
+`pop-view` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
-Using a PHP-file template, 'hello.phtml':
+INSTALL
+-------
+
+Install `pop-view` using Composer.
+
+    composer require popphp/pop-view
+
+BASIC USAGE
+-----------
+
+### Using a PHP-file template
+
+##### hello.phtml
 
 ```php
 <!DOCTYPE html>
@@ -33,6 +42,8 @@ Using a PHP-file template, 'hello.phtml':
 </html>
 ```
 
+You can set up the view object like this:
+
 ```php
 use Pop\View;
 use Pop\View\Template\File;
@@ -44,7 +55,9 @@ $view->content = 'This is a test!';
 echo $view;
 ```
 
-Using a basic stream template, 'hello.html':
+### Using a basic stream template
+
+##### hello.html
 
 ```html
 <!DOCTYPE html>
@@ -62,6 +75,8 @@ Using a basic stream template, 'hello.html':
 </html>
 ```
 
+You can set up the view object in a similar way:
+
 ```php
 use Pop\View;
 use Pop\View\Template\Stream;
@@ -73,7 +88,9 @@ $view->content = 'This is a test!';
 echo $view;
 ```
 
-Using includes with a stream template:
+### Using includes with a stream template
+
+##### header.html
 
 ```html
 <!-- header.html //-->
@@ -89,6 +106,8 @@ Using includes with a stream template:
     <header>This is the header</header>
 ```
 
+##### footer.html
+
 ```html
 <!-- footer.html //-->
     <footer>This is the footer</footer>
@@ -97,6 +116,8 @@ Using includes with a stream template:
 </html>
 ```
 
+##### index.html
+
 ```html
 <!-- index.html //-->
 {{@include header.html}}
@@ -104,6 +125,8 @@ Using includes with a stream template:
     <p>[{content}]</p>
 {{@include footer.html}}
 ```
+
+You can set up the view object like before:
 
 ```php
 use Pop\View;
@@ -116,7 +139,9 @@ $view->content = 'This is a test!';
 echo $view;
 ```
 
-Using inheritance with a stream template:
+### Using inheritance with a stream template
+
+##### parent.html
 
 ```html
 <!-- parent.html //-->
@@ -138,6 +163,8 @@ Using inheritance with a stream template:
 </html>
 ```
 
+##### child.html
+
 ```html
 <!-- child.html //-->
 {{@extends parent.html}}
@@ -150,6 +177,8 @@ Using inheritance with a stream template:
 {{/header}}
 ```
 
+You can set up the view object like before:
+
 ```php
 use Pop\View;
 use Pop\View\Template\Stream;
@@ -161,7 +190,7 @@ $view->content = 'This is a test!';
 echo $view;
 ```
 
-Basic iteration over an array with a stream template:
+### Basic iteration over an array with a stream template
 
 ```html
 <!-- index.html //-->
@@ -200,7 +229,7 @@ $view = new View\View(new View\Template\Stream('index.html'), $data);
 echo $view;
 ```
 
-Basic conditional logic with a stream template:
+### Basic conditional logic with a stream template
 
 ```html
 <!-- index.html //-->
