@@ -19,8 +19,14 @@ Install `pop-view` using Composer.
 
     composer require popphp/pop-view
 
-BASIC USAGE
------------
+## BASIC USAGE
+
+* [Using a PHP-file template](#using-a-php-file-template)
+* [Using a basic stream template](#using_a-basic-stream-template)
+* [Includes with a stream template](#includes-with-a-stream-template)
+* [Inheritance with a stream template](#inheritance-with-a-stream-template)
+* [Iteration over an array with a stream template](#iteration-over-an-array-with-a-stream-template)
+* [Conditional logic with a stream template](#conditional-logic-with-a-stream-template)
 
 ### Using a PHP-file template
 
@@ -55,6 +61,8 @@ $view->content = 'This is a test!';
 echo $view;
 ```
 
+[Top](#basic-usage)
+
 ### Using a basic stream template
 
 ##### hello.html
@@ -87,6 +95,8 @@ $view->content = 'This is a test!';
 
 echo $view;
 ```
+
+[Top](#basic-usage)
 
 ### Using includes with a stream template
 
@@ -139,6 +149,8 @@ $view->content = 'This is a test!';
 echo $view;
 ```
 
+[Top](#basic-usage)
+
 ### Using inheritance with a stream template
 
 ##### parent.html
@@ -190,6 +202,8 @@ $view->content = 'This is a test!';
 echo $view;
 ```
 
+[Top](#basic-usage)
+
 ### Basic iteration over an array with a stream template
 
 ```html
@@ -230,6 +244,8 @@ $view = new View(new Stream('index.html'), $data);
 echo $view;
 ```
 
+[Top](#basic-usage)
+
 ### Basic conditional logic with a stream template
 
 ```html
@@ -265,3 +281,6 @@ $view = new View(new Stream('index.html'), $data);
 
 echo $view;
 ```
+
+
+[Top](#basic-usage)
