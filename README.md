@@ -22,7 +22,7 @@ Install `pop-view` using Composer.
 ## BASIC USAGE
 
 * [Using a PHP-file template](#using-a-php-file-template)
-* [Using a basic stream template](#using_a-basic-stream-template)
+* [Using a basic stream template](#using-a-basic-stream-template)
 * [Includes with a stream template](#includes-with-a-stream-template)
 * [Inheritance with a stream template](#inheritance-with-a-stream-template)
 * [Iteration over an array with a stream template](#iteration-over-an-array-with-a-stream-template)
