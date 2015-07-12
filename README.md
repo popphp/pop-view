@@ -98,7 +98,7 @@ echo $view;
 
 [Top](#basic-usage)
 
-### Using includes with a stream template
+### Includes with a stream template
 
 ##### header.html
 
@@ -151,7 +151,7 @@ echo $view;
 
 [Top](#basic-usage)
 
-### Using inheritance with a stream template
+### Inheritance with a stream template
 
 ##### parent.html
 
@@ -204,7 +204,7 @@ echo $view;
 
 [Top](#basic-usage)
 
-### Basic iteration over an array with a stream template
+### Iteration over an array with a stream template
 
 ```html
 <!-- index.html //-->
@@ -246,7 +246,7 @@ echo $view;
 
 [Top](#basic-usage)
 
-### Basic conditional logic with a stream template
+### Conditional logic with a stream template
 
 ```html
 <!-- index.html //-->
