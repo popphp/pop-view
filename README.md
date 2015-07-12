@@ -45,10 +45,10 @@ BASIC USAGE
 You can set up the view object like this:
 
 ```php
-use Pop\View;
+use Pop\View\View;
 use Pop\View\Template\File;
 
-$view = new View\View(new View\Template\File('hello.phtml'));
+$view = new View(new File('hello.phtml'));
 $view->title   = 'Hello World!';
 $view->content = 'This is a test!';
 
@@ -78,10 +78,10 @@ echo $view;
 You can set up the view object in a similar way:
 
 ```php
-use Pop\View;
+use Pop\View\View;
 use Pop\View\Template\Stream;
 
-$view = new View\View(new View\Template\Stream('hello.html'));
+$view = new View(new Stream('hello.html'));
 $view->title   = 'Hello World!';
 $view->content = 'This is a test!';
 
@@ -129,10 +129,10 @@ echo $view;
 You can set up the view object like before:
 
 ```php
-use Pop\View;
+use Pop\View\View;
 use Pop\View\Template\Stream;
 
-$view = new View\View(new View\Template\Stream('index.html'));
+$view = new View(new Stream('index.html'));
 $view->title   = 'Hello World!';
 $view->content = 'This is a test!';
 
@@ -180,10 +180,10 @@ echo $view;
 You can set up the view object like before:
 
 ```php
-use Pop\View;
+use Pop\View\View;
 use Pop\View\Template\Stream;
 
-$view = new View\View(new View\Template\Stream('child.html'));
+$view = new View(new Stream('child.html'));
 $view->title   = 'Hello World!';
 $view->content = 'This is a test!';
 
@@ -214,7 +214,8 @@ echo $view;
 ```
 
 ```php
-use Pop\View;
+use Pop\View\View;
+use Pop\View\Template\Stream;
 
 $data = [
     'items' => [
@@ -224,7 +225,7 @@ $data = [
     ]
 ];
 
-$view = new View\View(new View\Template\Stream('index.html'), $data);
+$view = new View(new Stream('index.html'), $data);
 
 echo $view;
 ```
@@ -255,11 +256,12 @@ echo $view;
 ```
 
 ```php
-use Pop\View;
+use Pop\View\View;
+use Pop\View\Template\Stream;
 
 $data = ['foo' => 'bar'];
 
-$view = new View\View(new View\Template\Stream('index.html'), $data);
+$view = new View(new Stream('index.html'), $data);
 
 echo $view;
 ```
