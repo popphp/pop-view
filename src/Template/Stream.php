@@ -442,29 +442,53 @@ class Stream extends AbstractTemplate
                     foreach ($value as $ky => $val) {
                         // Handle nested array
                         if (is_array($val) || ($val instanceof \ArrayObject)) {
-                            $s = '[{' . $ky . '}]';
-                            $e = '[{/' . $ky . '}]';
-                            if ((strpos($loop, $s) !== false) && (strpos($loop, $e) !== false)) {
-                                $l = $loop;
-                                $lCode = substr($l, strpos($l, $s));
-                                $lCode = substr($lCode, 0, (strpos($lCode, $e) + strlen($e)));
-
-                                $l = str_replace($s, '', $lCode);
-                                $l = str_replace($e, '', $l);
-                                $oLoop = '';
+                            if (is_numeric($ky)) {
+                                $oLoop = $loop;
                                 foreach ($val as $k => $v) {
                                     // Check is value is stringable
                                     if ((is_object($v) && method_exists($v, '__toString')) || (!is_object($v) && !is_array($v))) {
-                                        $oLoop .= str_replace(['[{key}]', '[{value}]'], [$k, $v], $l);
+                                        $oLoop = str_replace('[{' . $k . '}]', $v, $oLoop);
                                     }
                                 }
-                                $outputLoop = str_replace($lCode, $oLoop, $loop);
+                                if (strpos($oLoop, '[{i}]') !== false) {
+                                    $oLoop = str_replace('[{i}]', ($i + 1), $oLoop);
+                                }
+                                $outputLoop .= $oLoop;
+                            } else {
+                                $s = '[{' . $ky . '}]';
+                                $e = '[{/' . $ky . '}]';
+                                if ((strpos($loop, $s) !== false) && (strpos($loop, $e) !== false)) {
+                                    $l = $loop;
+                                    $lCode = substr($l, strpos($l, $s));
+                                    $lCode = substr($lCode, 0, (strpos($lCode, $e) + strlen($e)));
+
+                                    $l = str_replace($s, '', $lCode);
+                                    $l = str_replace($e, '', $l);
+                                    $oLoop = '';
+                                    $j = 1;
+                                    foreach ($val as $k => $v) {
+                                        // Check is value is stringable
+                                        if ((is_object($v) && method_exists($v, '__toString')) || (!is_object($v) && !is_array($v))) {
+                                            if (strpos($l, '[{i}]') !== false) {
+                                                $oLoop .= str_replace(['[{key}]', '[{value}]', '[{i}]'], [$k, $v, $j], $l);
+                                            } else {
+                                                $oLoop .= str_replace(['[{key}]', '[{value}]'], [$k, $v], $l);
+                                            }
+                                            $j++;
+                                        }
+                                    }
+                                    $outputLoop = str_replace($lCode, $oLoop, $loop);
+                                }
                             }
                         // Handle scalar
                         } else {
                             // Check is value is stringable
                             if ((is_object($val) && method_exists($val, '__toString')) || (!is_object($val) && !is_array($val))) {
-                                $outputLoop .= str_replace(['[{key}]', '[{value}]'], [$ky, $val], $loop);
+                                if (strpos($loop, '[{i}]') !== false) {
+                                    $outputLoop .= str_replace(['[{key}]', '[{value}]', '[{i}]'], [$ky, $val, ($i + 1)], $loop);
+                                } else {
+                                    $outputLoop .= str_replace(['[{key}]', '[{value}]'], [$ky, $val], $loop);
+                                }
                             }
                         }
                         $i++;

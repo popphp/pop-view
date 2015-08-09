@@ -61,6 +61,46 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('<div><strong>baz</strong>: 123</div>', $render);
     }
 
+    public function testArrays()
+    {
+        $template = new Stream(__DIR__ . '/tmp/arrays.html');
+        $render = $template->render([
+            'title' => 'Page Title',
+            'rows'  => [
+                [
+                    'title'   => 'Title #1',
+                    'content' => 'Content #1'
+                ],
+                [
+                    'title'   => 'Title #2',
+                    'content' => 'Content #2'
+                ],
+                [
+                    'title'   => 'Title #3',
+                    'content' => 'Content #3'
+                ]
+            ],
+            'items' => [
+                'info' => [
+                    'foo' => 'bar',
+                    'baz' => 123
+                ]
+            ],
+            'other' => [
+                'thing' => 1,
+                'something' => 2
+            ],
+            'blah' => [
+                'other',
+                'something-else'
+            ]
+
+        ]);
+        $this->assertContains('<h4>Title #1 (1)</h4>', $render);
+        $this->assertContains('<p>foo : bar  (1)</p>', $render);
+        $this->assertContains('<p>something-else (2)</p>', $render);
+    }
+
     public function testConditionalSet()
     {
         $template = new Stream(__DIR__ . '/tmp/conditional.html');
