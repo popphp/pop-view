@@ -16,6 +16,9 @@ class ViewTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertInstanceOf('Pop\View\View', $view);
         $this->assertInstanceOf('Pop\View\Template\File', $view->getTemplate());
+        $this->assertTrue($view->hasTemplate());
+        $this->assertTrue($view->isFile());
+        $this->assertFalse($view->isStream());
         $this->assertEquals(__DIR__ . '/tmp/index.phtml', $view->getTemplate()->getTemplate());
         $this->assertTrue(is_array($view->getData()));
         $this->assertEquals('Hello World', $view->title);

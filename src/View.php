@@ -70,6 +70,16 @@ class View implements \ArrayAccess
     }
 
     /**
+     * Has a view template
+     *
+     * @return boolean
+     */
+    public function hasTemplate()
+    {
+        return (null !== $this->template);
+    }
+
+    /**
      * Get view template
      *
      * @return Template\TemplateInterface
@@ -77,6 +87,26 @@ class View implements \ArrayAccess
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    /**
+     * Is view template a file
+     *
+     * @return boolean
+     */
+    public function isFile()
+    {
+        return ((null !== $this->template) && ($this->template instanceof Template\File));
+    }
+
+    /**
+     * Is view template a stream
+     *
+     * @return boolean
+     */
+    public function isStream()
+    {
+        return ((null !== $this->template) && ($this->template instanceof Template\Stream));
     }
 
     /**
