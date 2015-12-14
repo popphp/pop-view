@@ -386,10 +386,10 @@ class Stream extends AbstractTemplate
                     $index  = substr($var, (strpos($var, '[') + 1));
                     $index  = substr($index, 0, strpos($index, ']'));
                     $var    = substr($var, 0, strpos($var, '['));
-                    $varSet = (isset($this->data[$var][$index]));
+                    $varSet = (!empty($this->data[$var][$index]));
                 } else {
                     $index = null;
-                    $varSet = (isset($this->data[$var]));
+                    $varSet = (!empty($this->data[$var]));
                 }
                 if (strpos($cond, '[{else}]') !== false) {
                     if ($varSet) {
