@@ -264,11 +264,11 @@ class Stream extends AbstractTemplate
         if (null !== $this->data) {
             $this->output = $this->template;
 
-            // Parse conditionals
-            $this->parseConditionals();
-
             // Parse array values
             $this->parseArrays();
+
+            // Parse conditionals
+            $this->parseConditionals();
 
             // Parse scalar values
             $this->parseScalars();
@@ -367,60 +367,6 @@ class Stream extends AbstractTemplate
     }
 
     /**
-     * Parse conditionals in the template string
-     *
-     * @return void
-     */
-    protected function parseConditionals()
-    {
-        $matches = [];
-        preg_match_all('/\[{if/mi', $this->template, $matches, PREG_OFFSET_CAPTURE);
-        if (isset($matches[0]) && isset($matches[0][0])) {
-            foreach ($matches[0] as $match) {
-                $cond = substr($this->template, $match[1]);
-                $cond = substr($cond, 0, strpos($cond, '[{/if}]') + 7);
-                $var  = substr($cond, strpos($cond, '(') + 1);
-                $var  = substr($var, 0, strpos($var, ')'));
-                // If var is an array
-                if (strpos($var, '[') !== false) {
-                    $index  = substr($var, (strpos($var, '[') + 1));
-                    $index  = substr($index, 0, strpos($index, ']'));
-                    $var    = substr($var, 0, strpos($var, '['));
-                    $varSet = (!empty($this->data[$var][$index]));
-                } else {
-                    $index = null;
-                    $varSet = (!empty($this->data[$var]));
-                }
-                if (strpos($cond, '[{else}]') !== false) {
-                    if ($varSet) {
-                        $code = substr($cond, (strpos($cond, ')}]') + 3));
-                        $code = substr($code, 0, strpos($code, '[{else}]'));
-                        $code = (null !== $index) ?
-                            str_replace('[{' . $var . '[' . $index . ']}]', $this->data[$var][$index], $code) :
-                            str_replace('[{' . $var . '}]', $this->data[$var], $code);
-                        $this->output = str_replace($cond, $code, $this->output);
-                    } else {
-                        $code = substr($cond, (strpos($cond, '[{else}]') + 8));
-                        $code = substr($code, 0, strpos($code, '[{/if}]'));
-                        $this->output = str_replace($cond, $code, $this->output);
-                    }
-                } else {
-                    if ($varSet) {
-                        $code = substr($cond, (strpos($cond, ')}]') + 3));
-                        $code = substr($code, 0, strpos($code, '[{/if}]'));
-                        $code = (null !== $index) ?
-                            str_replace('[{' . $var . '[' . $index . ']}]', $this->data[$var][$index], $code) :
-                            str_replace('[{' . $var . '}]', $this->data[$var], $code);
-                        $this->output = str_replace($cond, $code, $this->output);
-                    } else {
-                        $this->output = str_replace($cond, '', $this->output);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Parse arrays in the template string
      *
      * @return void
@@ -435,11 +381,59 @@ class Stream extends AbstractTemplate
                     $loopCode = substr($this->template, strpos($this->template, $start));
                     $loopCode = substr($loopCode, 0, (strpos($loopCode, $end) + strlen($end)));
 
-                    $loop = str_replace($start, '', $loopCode);
-                    $loop = str_replace($end, '', $loop);
                     $outputLoop = '';
                     $i = 0;
                     foreach ($value as $ky => $val) {
+                        $loop = str_replace($start, '', $loopCode);
+                        $loop = str_replace($end, '', $loop);
+                        if (strpos($loop, '[{if(') !== false) {
+                            $matches = [];
+                            preg_match_all('/\[{if/mi', $loop, $matches, PREG_OFFSET_CAPTURE);
+                            if (isset($matches[0]) && isset($matches[0][0])) {
+                                foreach ($matches[0] as $match) {
+                                    $cond = substr($loop, $match[1]);
+                                    $cond = substr($cond, 0, strpos($cond, '[{/if}]') + 7);
+                                    $var  = substr($cond, strpos($cond, '(') + 1);
+                                    $var  = substr($var, 0, strpos($var, ')'));
+                                    // If var is an array
+                                    if (strpos($var, '[') !== false) {
+                                        $index  = substr($var, (strpos($var, '[') + 1));
+                                        $index  = substr($index, 0, strpos($index, ']'));
+                                        $var    = substr($var, 0, strpos($var, '['));
+                                        $varSet = (!empty($val[$var][$index]));
+                                    } else {
+                                        $index  = null;
+                                        $varSet = (!empty($val[$var]));
+                                    }
+                                    if (strpos($cond, '[{else}]') !== false) {
+                                        if ($varSet) {
+                                            $code = substr($cond, (strpos($cond, ')}]') + 3));
+                                            $code = substr($code, 0, strpos($code, '[{else}]'));
+                                            $code = (null !== $index) ?
+                                                str_replace('[{' . $var . '[' . $index . ']}]', $val[$var][$index], $code) :
+                                                str_replace('[{' . $var . '}]', $val[$var], $code);
+                                            $loop = str_replace($cond, $code, $loop);
+                                        } else {
+                                            $code = substr($cond, (strpos($cond, '[{else}]') + 8));
+                                            $code = substr($code, 0, strpos($code, '[{/if}]'));
+                                            $loop = str_replace($cond, $code, $loop);
+                                        }
+                                    } else {
+                                        if ($varSet) {
+                                            $code = substr($cond, (strpos($cond, ')}]') + 3));
+                                            $code = substr($code, 0, strpos($code, '[{/if}]'));
+                                            $code = (null !== $index) ?
+                                                str_replace('[{' . $var . '[' . $index . ']}]', $val[$var][$index], $code) :
+                                                str_replace('[{' . $var . '}]', $val[$var], $code);
+                                            $loop = str_replace($cond, $code, $loop);
+                                        } else {
+                                            $loop = str_replace($cond, '', $loop);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         // Handle nested array
                         if (is_array($val) || ($val instanceof \ArrayObject)) {
                             if (is_numeric($ky)) {
@@ -497,6 +491,60 @@ class Stream extends AbstractTemplate
                         }
                     }
                     $this->output = str_replace($loopCode, $outputLoop, $this->output);
+                }
+            }
+        }
+    }
+
+    /**
+     * Parse conditionals in the template string
+     *
+     * @return void
+     */
+    protected function parseConditionals()
+    {
+        $matches = [];
+        preg_match_all('/\[{if/mi', $this->template, $matches, PREG_OFFSET_CAPTURE);
+        if (isset($matches[0]) && isset($matches[0][0])) {
+            foreach ($matches[0] as $match) {
+                $cond = substr($this->template, $match[1]);
+                $cond = substr($cond, 0, strpos($cond, '[{/if}]') + 7);
+                $var  = substr($cond, strpos($cond, '(') + 1);
+                $var  = substr($var, 0, strpos($var, ')'));
+                // If var is an array
+                if (strpos($var, '[') !== false) {
+                    $index  = substr($var, (strpos($var, '[') + 1));
+                    $index  = substr($index, 0, strpos($index, ']'));
+                    $var    = substr($var, 0, strpos($var, '['));
+                    $varSet = (!empty($this->data[$var][$index]));
+                } else {
+                    $index  = null;
+                    $varSet = (!empty($this->data[$var]));
+                }
+                if (strpos($cond, '[{else}]') !== false) {
+                    if ($varSet) {
+                        $code = substr($cond, (strpos($cond, ')}]') + 3));
+                        $code = substr($code, 0, strpos($code, '[{else}]'));
+                        $code = (null !== $index) ?
+                            str_replace('[{' . $var . '[' . $index . ']}]', $this->data[$var][$index], $code) :
+                            str_replace('[{' . $var . '}]', $this->data[$var], $code);
+                        $this->output = str_replace($cond, $code, $this->output);
+                    } else {
+                        $code = substr($cond, (strpos($cond, '[{else}]') + 8));
+                        $code = substr($code, 0, strpos($code, '[{/if}]'));
+                        $this->output = str_replace($cond, $code, $this->output);
+                    }
+                } else {
+                    if ($varSet) {
+                        $code = substr($cond, (strpos($cond, ')}]') + 3));
+                        $code = substr($code, 0, strpos($code, '[{/if}]'));
+                        $code = (null !== $index) ?
+                            str_replace('[{' . $var . '[' . $index . ']}]', $this->data[$var][$index], $code) :
+                            str_replace('[{' . $var . '}]', $this->data[$var], $code);
+                        $this->output = str_replace($cond, $code, $this->output);
+                    } else {
+                        $this->output = str_replace($cond, '', $this->output);
+                    }
                 }
             }
         }

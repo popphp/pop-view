@@ -61,9 +61,9 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('<div><strong>baz</strong>: 123</div>', $render);
     }
 
-    public function testArrays()
+    public function testArrays1()
     {
-        $template = new Stream(__DIR__ . '/tmp/arrays.html');
+        $template = new Stream(__DIR__ . '/tmp/arrays1.html');
         $render = $template->render([
             'title' => 'Page Title',
             'rows'  => [
@@ -99,6 +99,56 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('<h4>Title #1 (1)</h4>', $render);
         $this->assertContains('<p>foo : bar  (1)</p>', $render);
         $this->assertContains('<p>something-else (2)</p>', $render);
+    }
+
+    public function testArrays2()
+    {
+        $template = new Stream(__DIR__ . '/tmp/arrays2.html');
+        $render = $template->render([
+            'rows'  => [
+                [
+                    'foo' => 'bar'
+                ],
+                [
+                    'baz' => 'test'
+                ]
+            ],
+            'items' => [
+                [
+                    'foo' => [
+                        'bar' => 'baz'
+                    ]
+                ]
+            ]
+
+        ]);
+        $this->assertContains('<p>bar</p>', $render);
+        $this->assertContains('<p>baz</p>', $render);
+    }
+
+    public function testArrays3()
+    {
+        $template = new Stream(__DIR__ . '/tmp/arrays3.html');
+        $render = $template->render([
+            'rows'  => [
+                [
+                    'foo' => 'bar'
+                ],
+                [
+                    'baz' => 'test'
+                ]
+            ],
+            'items' => [
+                [
+                    'foo' => [
+                        'bar' => 'baz'
+                    ]
+                ]
+            ]
+
+        ]);
+        $this->assertContains('<p>bar</p>', $render);
+        $this->assertContains('<p>baz</p>', $render);
     }
 
     public function testConditionalSet()

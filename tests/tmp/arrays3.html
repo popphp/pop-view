@@ -1,0 +1,21 @@
+{{@include inc/header.html}}
+[{rows}]
+<div class="row-div">
+[{if(foo)}]
+    <p>[{foo}]</p>
+[{else}]
+    No Foo!
+[{/if}]
+</div>
+[{/rows}]
+
+[{items}]
+<div class="row-div">
+[{if(foo[bar])}]
+    <p>[{foo[bar]}]</p>
+[{else}]
+    No Foo Bar!
+[{/if}]
+</div>
+[{/items}]
+{{@include inc/footer.html}}
