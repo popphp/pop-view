@@ -142,7 +142,7 @@ class View implements \ArrayAccess
             // If a native PHP file template
             if (((substr($template, -6) == '.phtml') ||
                     (substr($template, -5, 4) == '.php') ||
-                    (substr($template, -4) == '.php')) && (file_exists($template))) {
+                    (substr($template, -4) == '.php')) && (strlen($template) <= 255) && (file_exists($template))) {
                 $template = new Template\File($template);
             // If a string template, or a string template from a non-PHP file
             } else {

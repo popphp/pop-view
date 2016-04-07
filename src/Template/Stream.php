@@ -86,7 +86,7 @@ class Stream extends AbstractTemplate
      */
     public function setTemplate($template)
     {
-        if (file_exists($template)) {
+        if ((strlen($template) <= 255) && file_exists($template)) {
             $this->template = file_get_contents($template);
             $this->file     = $template;
         } else {
