@@ -2,7 +2,7 @@ pop-view
 ========
 
 [![Build Status](https://travis-ci.org/popphp/pop-view.svg?branch=master)](https://travis-ci.org/popphp/pop-view)
-[![Coverage Status](http://www.popphp.org/cc/coverage.php?comp=pop-view)](http://www.popphp.org/cc/pop-view/)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-view)](http://cc.popphp.org/pop-view/)
 
 OVERVIEW
 --------
