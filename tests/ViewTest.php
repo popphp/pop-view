@@ -65,7 +65,7 @@ class ViewTest extends \PHPUnit_Framework_TestCase
 
     public function testAddFiltersException()
     {
-        $this->setExpectedException('Pop\View\Exception');
+        $this->expectException('Pop\View\Exception');
         $view = new View();
         $view->addFilters([
             [
@@ -128,7 +128,7 @@ class ViewTest extends \PHPUnit_Framework_TestCase
 
     public function testRenderException()
     {
-        $this->setExpectedException('Pop\View\Exception');
+        $this->expectException('Pop\View\Exception');
         $view = new View();
         $view->render();
     }

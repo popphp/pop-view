@@ -9,7 +9,7 @@ class FileTest extends \PHPUnit_Framework_TestCase
 
     public function testSetTemplateException()
     {
-        $this->setExpectedException('Pop\View\Template\Exception');
+        $this->expectException('Pop\View\Template\Exception');
         $template = new File(__DIR__ . '/tmp/home.phtml');
     }
 

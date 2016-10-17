@@ -17,11 +17,11 @@ namespace Pop\View;
  * View class
  *
  * @category   Pop
- * @package    Pop_View
+ * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.1.0
+ * @version    3.0.0
  */
 class View implements \ArrayAccess
 {
@@ -57,7 +57,6 @@ class View implements \ArrayAccess
      *
      * @param  mixed $template
      * @param  array $data
-     * @return View
      */
     public function __construct($template = null, array $data = null)
     {

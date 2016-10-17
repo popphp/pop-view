@@ -17,11 +17,11 @@ namespace Pop\View\Template;
  * View stream template class
  *
  * @category   Pop
- * @package    Pop_View
+ * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.1.0
+ * @version    3.0.0
  */
 class Stream extends AbstractTemplate
 {
@@ -62,7 +62,6 @@ class Stream extends AbstractTemplate
      * Instantiate the view stream template object
      *
      * @param  string $template
-     * @return Stream
      */
     public function __construct($template)
     {

@@ -17,11 +17,11 @@ namespace Pop\View\Template;
  * View file template class
  *
  * @category   Pop
- * @package    Pop_View
+ * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    2.1.0
+ * @version    3.0.0
  */
 class File extends AbstractTemplate
 {
@@ -32,7 +32,6 @@ class File extends AbstractTemplate
      * Instantiate the view file template object
      *
      * @param  string $template
-     * @return File
      */
     public function __construct($template)
     {
