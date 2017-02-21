@@ -112,7 +112,7 @@ class ViewTest extends \PHPUnit_Framework_TestCase
         ]);
 
         ob_start();
-        $view->output();
+        echo $view;
         $result = ob_get_clean();
 
         $string = (string)$view;

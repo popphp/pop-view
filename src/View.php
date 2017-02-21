@@ -89,6 +89,16 @@ class View implements \ArrayAccess
     }
 
     /**
+     * Get rendered output
+     *
+     * @return string
+     */
+    public function getOutput()
+    {
+        return $this->output;
+    }
+
+    /**
      * Is view template a file
      *
      * @return boolean
@@ -173,6 +183,14 @@ class View implements \ArrayAccess
      */
     public function addFilter($call, $params = null)
     {
+        if (null !== $params) {
+            if (!is_array($params)) {
+                $params = [$params];
+            }
+        } else {
+            $params = [];
+        }
+
         $this->filters[] = [
             'call'   => $call,
             'params' => $params
@@ -244,16 +262,6 @@ class View implements \ArrayAccess
     {
         $this->filterData();
         return $this;
-    }
-
-    /**
-     * Render and output the view
-     *
-     * @return mixed
-     */
-    public function output()
-    {
-        echo $this->render();
     }
 
     /**
@@ -384,30 +392,14 @@ class View implements \ArrayAccess
     protected function filterData()
     {
         if (count($this->filters) > 0) {
-            foreach ($this->filters as $filter) {
-                $params = [];
-                if (isset($filter['params'])) {
-                    $params = (!is_array($filter['params'])) ? [$filter['params']] : $filter['params'];
+            foreach ($this->data as $key => $value) {
+                foreach ($this->filters as $filter) {
+                    $params = array_merge([$value], $filter['params']);
+                    $value  = call_user_func_array($filter['call'], $params);
                 }
-                $this->applyFilter($this->data, $filter['call'], $params);
+                $this->data[$key] = $value;
             }
         }
-    }
-
-    /**
-     * Execute filter over data
-     *
-     * @param  array  $array
-     * @param  string $call
-     * @param  array  $params
-     * @return void
-     */
-    protected function applyFilter(&$array, $call, $params = [])
-    {
-        array_walk_recursive($array, function(&$value, $key, $userdata) {
-            $params = array_merge([$value], $userdata[1]);
-            $value = call_user_func_array($userdata[0], $params);
-        }, [$call, $params]);
     }
 
 }
