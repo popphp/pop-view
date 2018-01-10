@@ -73,6 +73,7 @@ class File extends AbstractTemplate
     /**
      * Render view template file
      *
+     * @throws \Exception
      * @return void
      */
     protected function renderTemplate()
@@ -83,9 +84,14 @@ class File extends AbstractTemplate
             }
         }
 
-        ob_start();
-        include $this->template;
-        $this->output = ob_get_clean();
+        try {
+            ob_start();
+            include $this->template;
+            $this->output = ob_get_clean();
+        } catch (\Exception $e) {
+            ob_clean();
+            throw $e;
+        }
     }
 
 }
