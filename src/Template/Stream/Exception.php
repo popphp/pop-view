@@ -11,10 +11,10 @@
 /**
  * @namespace
  */
-namespace Pop\View\Template;
+namespace Pop\View\Template\Stream;
 
 /**
- * View template exception class
+ * View template stream exception class
  *
  * @category   Pop
  * @package    Pop\View

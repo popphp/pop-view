@@ -3,9 +3,9 @@
 namespace Pop\View\Test;
 
 use Pop\View\View;
-use Pop\View\Template;
+use PHPUnit\Framework\TestCase;
 
-class ViewTest extends \PHPUnit_Framework_TestCase
+class ViewTest extends TestCase
 {
 
     public function testConstructor()
@@ -44,6 +44,18 @@ class ViewTest extends \PHPUnit_Framework_TestCase
         unset($view['baz']);
         $this->assertFalse(isset($view->foo));
         $this->assertFalse(isset($view['baz']));
+    }
+
+    public function testAddFilter()
+    {
+        $view = new View(null, [
+            'title' => '"Hello <script>World</script>"',
+        ]);
+        $view->addFilter('strip_tags');
+        $view->addFilter('htmlentities', ENT_QUOTES);
+
+        $view->filter();
+        $this->assertEquals('&quot;Hello World&quot;', $view->title);
     }
 
     public function testAddFilters()
@@ -124,6 +136,7 @@ class ViewTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('<title>Hello World</title>', $string);
         $this->assertContains('<h1>Hello World</h1>', $string);
         $this->assertContains('<p>This is a test.</p>', $string);
+        $this->assertContains('<p>This is a test.</p>', $view->getOutput());
     }
 
     public function testRenderException()

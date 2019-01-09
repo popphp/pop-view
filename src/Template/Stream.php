@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2018 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\View\Template;
  * @category   Pop
  * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2018 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.0.2
+ * @version    3.0.3
  */
 class Stream extends AbstractTemplate
 {
@@ -254,27 +254,6 @@ class Stream extends AbstractTemplate
     }
 
     /**
-     * Render view template string
-     *
-     * @return void
-     */
-    protected function renderTemplate()
-    {
-        if (null !== $this->data) {
-            $this->output = $this->template;
-
-            // Parse array values
-            $this->parseArrays();
-
-            // Parse conditionals
-            $this->parseConditionals();
-
-            // Parse scalar values
-            $this->parseScalars();
-        }
-    }
-
-    /**
      * Parse template parent/child blocks
      *
      * @return void
@@ -327,6 +306,7 @@ class Stream extends AbstractTemplate
     {
         $matches = [];
         preg_match_all('/\{\{(.*?)\{\{\/(.*?)\}\}/s', $this->template, $matches);
+
         if (isset($matches[0]) && isset($matches[0][0])) {
             foreach ($matches[0] as $match) {
                 $name    = substr($match, 2);
@@ -366,221 +346,23 @@ class Stream extends AbstractTemplate
     }
 
     /**
-     * Parse arrays in the template string
+     * Render view template string
      *
      * @return void
      */
-    protected function parseArrays()
+    protected function renderTemplate()
     {
-        foreach ($this->data as $key => $value) {
-            if (is_array($value) || ($value instanceof \ArrayObject)) {
-                $start = '[{' . $key . '}]';
-                $end   = '[{/' . $key . '}]';
-                if ((strpos($this->template, $start) !== false) && (strpos($this->template, $end) !== false)) {
-                    $loopCode = substr($this->template, strpos($this->template, $start));
-                    $loopCode = substr($loopCode, 0, (strpos($loopCode, $end) + strlen($end)));
+        if (null !== $this->data) {
+            $this->output = $this->template;
 
-                    $outputLoop = '';
-                    $i = 0;
-                    foreach ($value as $ky => $val) {
-                        $loop = str_replace($start, '', $loopCode);
-                        $loop = str_replace($end, '', $loop);
-                        if (strpos($loop, '[{if(') !== false) {
-                            $matches = [];
-                            preg_match_all('/\[{if/mi', $loop, $matches, PREG_OFFSET_CAPTURE);
-                            if (isset($matches[0]) && isset($matches[0][0])) {
-                                foreach ($matches[0] as $match) {
-                                    $cond = substr($loop, $match[1]);
-                                    $cond = substr($cond, 0, strpos($cond, '[{/if}]') + 7);
-                                    $var  = substr($cond, strpos($cond, '(') + 1);
-                                    $var  = substr($var, 0, strpos($var, ')'));
-                                    // If var is an array
-                                    if (strpos($var, '[') !== false) {
-                                        $index  = substr($var, (strpos($var, '[') + 1));
-                                        $index  = substr($index, 0, strpos($index, ']'));
-                                        $var    = substr($var, 0, strpos($var, '['));
-                                        $varSet = (!empty($val[$var][$index]));
-                                    } else {
-                                        $index  = null;
-                                        $varSet = (!empty($val[$var]));
-                                    }
-                                    if (strpos($cond, '[{else}]') !== false) {
-                                        if ($varSet) {
-                                            $code = substr($cond, (strpos($cond, ')}]') + 3));
-                                            $code = substr($code, 0, strpos($code, '[{else}]'));
-                                            $code = (null !== $index) ?
-                                                str_replace('[{' . $var . '[' . $index . ']}]', $val[$var][$index], $code) :
-                                                str_replace('[{' . $var . '}]', $val[$var], $code);
-                                            $loop = str_replace($cond, $code, $loop);
-                                        } else {
-                                            $code = substr($cond, (strpos($cond, '[{else}]') + 8));
-                                            $code = substr($code, 0, strpos($code, '[{/if}]'));
-                                            $loop = str_replace($cond, $code, $loop);
-                                        }
-                                    } else {
-                                        if ($varSet) {
-                                            $code = substr($cond, (strpos($cond, ')}]') + 3));
-                                            $code = substr($code, 0, strpos($code, '[{/if}]'));
-                                            $code = (null !== $index) ?
-                                                str_replace('[{' . $var . '[' . $index . ']}]', $val[$var][$index], $code) :
-                                                str_replace('[{' . $var . '}]', $val[$var], $code);
-                                            $loop = str_replace($cond, $code, $loop);
-                                        } else {
-                                            $loop = str_replace($cond, '', $loop);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+            // Parse array values
+            $this->output = Stream\Parser::parseArrays($this->template, $this->data, $this->output);
 
-                        // Handle nested array
-                        if (is_array($val) || ($val instanceof \ArrayObject)) {
-                            if (is_numeric($ky)) {
-                                $oLoop = $loop;
-                                foreach ($val as $k => $v) {
-                                    // Check is value is stringable
-                                    if ((is_object($v) && method_exists($v, '__toString')) || (!is_object($v) && !is_array($v))) {
-                                        $oLoop = str_replace('[{' . $k . '}]', $v, $oLoop);
-                                    }
-                                }
-                                if (strpos($oLoop, '[{i}]') !== false) {
-                                    $oLoop = str_replace('[{i}]', ($i + 1), $oLoop);
-                                }
-                                $outputLoop .= $oLoop;
-                            } else {
-                                $s = '[{' . $ky . '}]';
-                                $e = '[{/' . $ky . '}]';
-                                if ((strpos($loop, $s) !== false) && (strpos($loop, $e) !== false)) {
-                                    $l = $loop;
-                                    $lCode = substr($l, strpos($l, $s));
-                                    $lCode = substr($lCode, 0, (strpos($lCode, $e) + strlen($e)));
+            // Parse conditionals
+            $this->output = Stream\Parser::parseConditionals($this->template, $this->data, $this->output);
 
-                                    $l = str_replace($s, '', $lCode);
-                                    $l = str_replace($e, '', $l);
-                                    $oLoop = '';
-                                    $j = 1;
-                                    foreach ($val as $k => $v) {
-                                        // Check is value is stringable
-                                        if ((is_object($v) && method_exists($v, '__toString')) || (!is_object($v) && !is_array($v))) {
-                                            if (strpos($l, '[{i}]') !== false) {
-                                                $oLoop .= str_replace(['[{key}]', '[{value}]', '[{i}]'], [$k, $v, $j], $l);
-                                            } else {
-                                                $oLoop .= str_replace(['[{key}]', '[{value}]'], [$k, $v], $l);
-                                            }
-                                            $j++;
-                                        }
-                                    }
-                                    $outputLoop = str_replace($lCode, $oLoop, $loop);
-                                }
-                            }
-                        // Handle scalar
-                        } else {
-                            // Check is value is stringable
-                            if ((is_object($val) && method_exists($val, '__toString')) || (!is_object($val) && !is_array($val))) {
-                                if (strpos($loop, '[{i}]') !== false) {
-                                    $outputLoop .= str_replace(['[{key}]', '[{value}]', '[{i}]'], [$ky, $val, ($i + 1)], $loop);
-                                } else {
-                                    $outputLoop .= str_replace(['[{key}]', '[{value}]'], [$ky, $val], $loop);
-                                }
-                            }
-                        }
-                        $i++;
-                        if ($i < count($value)) {
-                            $outputLoop .= PHP_EOL;
-                        }
-                    }
-                    $this->output = str_replace($loopCode, $outputLoop, $this->output);
-                }
-            }
-        }
-    }
-
-    /**
-     * Parse conditionals in the template string
-     *
-     * @return void
-     */
-    protected function parseConditionals()
-    {
-        $matches = [];
-        preg_match_all('/\[{if/mi', $this->template, $matches, PREG_OFFSET_CAPTURE);
-        if (isset($matches[0]) && isset($matches[0][0])) {
-            foreach ($matches[0] as $match) {
-                $cond = substr($this->template, $match[1]);
-                $cond = substr($cond, 0, strpos($cond, '[{/if}]') + 7);
-                $var  = substr($cond, strpos($cond, '(') + 1);
-                $var  = substr($var, 0, strpos($var, ')'));
-                // If var is an array
-                if (strpos($var, '[') !== false) {
-                    $index  = substr($var, (strpos($var, '[') + 1));
-                    $index  = substr($index, 0, strpos($index, ']'));
-                    $var    = substr($var, 0, strpos($var, '['));
-                    $varSet = (!empty($this->data[$var][$index]));
-                } else {
-                    $index  = null;
-                    $varSet = (!empty($this->data[$var]));
-                }
-                if (strpos($cond, '[{else}]') !== false) {
-                    if ($varSet) {
-                        $code = substr($cond, (strpos($cond, ')}]') + 3));
-                        $code = substr($code, 0, strpos($code, '[{else}]'));
-                        $code = (null !== $index) ?
-                            str_replace('[{' . $var . '[' . $index . ']}]', $this->data[$var][$index], $code) :
-                            str_replace('[{' . $var . '}]', $this->data[$var], $code);
-                        $this->output = str_replace($cond, $code, $this->output);
-                    } else {
-                        $code = substr($cond, (strpos($cond, '[{else}]') + 8));
-                        $code = substr($code, 0, strpos($code, '[{/if}]'));
-                        $this->output = str_replace($cond, $code, $this->output);
-                    }
-                } else {
-                    if ($varSet) {
-                        $code = substr($cond, (strpos($cond, ')}]') + 3));
-                        $code = substr($code, 0, strpos($code, '[{/if}]'));
-                        $code = (null !== $index) ?
-                            str_replace('[{' . $var . '[' . $index . ']}]', $this->data[$var][$index], $code) :
-                            str_replace('[{' . $var . '}]', $this->data[$var], $code);
-                        $this->output = str_replace($cond, $code, $this->output);
-                    } else {
-                        $this->output = str_replace($cond, '', $this->output);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Parse scalar values in the template string
-     *
-     * @return void
-     */
-    protected function parseScalars()
-    {
-        foreach ($this->data as $key => $value) {
-            if (is_array($value) && (strpos($this->output, '[{' . $key . '[') !== false)) {
-                $matches = [];
-                preg_match_all('/\[{' . $key .'\[/mi', $this->output, $matches, PREG_OFFSET_CAPTURE);
-                if (isset($matches[0]) && isset($matches[0][0])) {
-                    $indices = [];
-                    foreach ($matches[0] as $match) {
-                        $i = substr($this->output, $match[1] + (strlen($key) + 3));
-                        $i = substr($i, 0, strpos($i, ']'));
-                        $indices[] = $i;
-                    }
-                    foreach ($indices as $i) {
-                        if (isset($value[$i])) {
-                            $this->output = str_replace('[{' . $key . '[' . $i . ']}]', $value[$i], $this->output);
-                        } else {
-                            $this->output = str_replace('[{' . $key . '[' . $i . ']}]', '', $this->output);
-                        }
-                    }
-                }
-            } else if (!is_array($value) && !($value instanceof \ArrayObject)) {
-                // Check is value is stringable
-                if ((is_object($value) && method_exists($value, '__toString')) || (!is_object($value) && !is_array($value))) {
-                    $this->output = str_replace('[{' . $key . '}]', $value, $this->output);
-                }
-            }
+            // Parse scalar values
+            $this->output = Stream\Parser::parseScalars($this->data, $this->output);
         }
     }
 
