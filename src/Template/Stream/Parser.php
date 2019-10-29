@@ -21,7 +21,7 @@ namespace Pop\View\Template\Stream;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.1.0
+ * @version    3.1.1
  */
 class Parser
 {
@@ -37,7 +37,7 @@ class Parser
     public static function parseArrays($template, $data, $output)
     {
         foreach ($data as $key => $value) {
-            if (is_array($value) || ($value instanceof \ArrayObject)) {
+            if (is_array($value) || ($value instanceof \ArrayAccess) || ($value instanceof \ArrayObject)) {
                 $start = '[{' . $key . '}]';
                 $end   = '[{/' . $key . '}]';
                 if ((strpos($template, $start) !== false) && (strpos($template, $end) !== false)) {
@@ -99,12 +99,13 @@ class Parser
                         }
 
                         // Handle nested array
-                        if (is_array($val) || ($val instanceof \ArrayObject)) {
+                        if (is_array($val) || ($value instanceof \ArrayAccess) || ($val instanceof \ArrayObject)) {
                             if (is_numeric($ky)) {
                                 $oLoop = $loop;
                                 foreach ($val as $k => $v) {
                                     // Check is value is stringable
-                                    if ((is_object($v) && method_exists($v, '__toString')) || (!is_object($v) && !is_array($v))) {
+                                    if ((is_object($v) && method_exists($v, '__toString')) ||
+                                        (!is_object($v) && !is_array($v))) {
                                         $oLoop = str_replace('[{' . $k . '}]', $v, $oLoop);
                                     }
                                 }
@@ -127,7 +128,8 @@ class Parser
 
                                     foreach ($val as $k => $v) {
                                         // Check is value is stringable
-                                        if ((is_object($v) && method_exists($v, '__toString')) || (!is_object($v) && !is_array($v))) {
+                                        if ((is_object($v) && method_exists($v, '__toString')) ||
+                                            (!is_object($v) && !is_array($v))) {
                                             if (strpos($l, '[{i}]') !== false) {
                                                 $oLoop .= str_replace(['[{key}]', '[{value}]', '[{i}]'], [$k, $v, $j], $l);
                                             } else {
@@ -142,7 +144,8 @@ class Parser
                         // Handle scalar
                         } else {
                             // Check is value is stringable
-                            if ((is_object($val) && method_exists($val, '__toString')) || (!is_object($val) && !is_array($val))) {
+                            if ((is_object($val) && method_exists($val, '__toString')) ||
+                                (!is_object($val) && !is_array($val))) {
                                 if (strpos($loop, '[{i}]') !== false) {
                                     $outputLoop .= str_replace(['[{key}]', '[{value}]', '[{i}]'], [$ky, $val, ($i + 1)], $loop);
                                 } else {
@@ -253,7 +256,7 @@ class Parser
                         }
                     }
                 }
-            } else if (!is_array($value) && !($value instanceof \ArrayObject)) {
+            } else if (!is_array($value) && !($value instanceof \ArrayAccess) && !($value instanceof \ArrayObject)) {
                 // Check is value is stringable
                 if ((is_object($value) && method_exists($value, '__toString')) || (!is_object($value) && !is_array($value))) {
                     $output = str_replace('[{' . $key . '}]', $value, $output);

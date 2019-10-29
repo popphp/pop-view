@@ -21,7 +21,7 @@ namespace Pop\View\Template;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.1.0
+ * @version    3.1.1
  */
 class File extends AbstractTemplate
 {
@@ -48,7 +48,7 @@ class File extends AbstractTemplate
     public function setTemplate($template)
     {
         if (!file_exists($template)) {
-            throw new Exception('Error: The template file does not exist.');
+            throw new Exception("Error: The template file '" . $template . "' does not exist.");
         }
         $this->template = $template;
 
