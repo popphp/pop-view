@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,17 +13,19 @@
  */
 namespace Pop\View;
 
+use Pop\Filter\AbstractFilterable;
+
 /**
  * View class
  *
  * @category   Pop
  * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2019 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2020 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.1.1
+ * @version    3.2.0
  */
-class View implements \ArrayAccess
+class View extends AbstractFilterable implements \ArrayAccess
 {
 
     /**
@@ -39,12 +41,6 @@ class View implements \ArrayAccess
     protected $data = [];
 
     /**
-     * Filters
-     * @var array
-     */
-    protected $filters = [];
-
-    /**
      * View output string
      * @var string
      */
@@ -57,14 +53,22 @@ class View implements \ArrayAccess
      *
      * @param  mixed $template
      * @param  array $data
+     * @param  mixed $filters
      */
-    public function __construct($template = null, array $data = null)
+    public function __construct($template = null, array $data = null, $filters = null)
     {
         if (null !== $template) {
             $this->setTemplate($template);
         }
         if (null !== $data) {
             $this->setData($data);
+        }
+        if (null !== $filters) {
+            if (is_array($filters)) {
+                $this->addFilters($filters);
+            } else {
+                $this->addFilter($filters);
+            }
         }
     }
 
@@ -175,60 +179,6 @@ class View implements \ArrayAccess
     }
 
     /**
-     * Add filter
-     *
-     * @param  mixed $call
-     * @param  mixed $params
-     * @return View
-     */
-    public function addFilter($call, $params = null)
-    {
-        if (null !== $params) {
-            if (!is_array($params)) {
-                $params = [$params];
-            }
-        } else {
-            $params = [];
-        }
-
-        $this->filters[] = [
-            'call'   => $call,
-            'params' => $params
-        ];
-        return $this;
-    }
-
-    /**
-     * Add filters
-     *
-     * @param  array $filters
-     * @throws Exception
-     * @return View
-     */
-    public function addFilters(array $filters)
-    {
-        foreach ($filters as $filter) {
-            if (!isset($filter['call'])) {
-                throw new Exception('Error: The \'call\' key must be set.');
-            }
-            $params = (isset($filter['params'])) ? $filter['params'] : null;
-            $this->addFilter($filter['call'], $params);
-        }
-        return $this;
-    }
-
-    /**
-     * Clear filters
-     *
-     * @return View
-     */
-    public function clearFilters()
-    {
-        $this->filters = [];
-        return $this;
-    }
-
-    /**
      * Set model data
      *
      * @param  string $name
@@ -254,14 +204,20 @@ class View implements \ArrayAccess
     }
 
     /**
-     * Filter of data with the filters that have been set
+     * Filter values
      *
-     * @return View
+     * @param  array $values
+     * @return array
      */
-    public function filter()
+    public function filter(array $values)
     {
-        $this->filterData();
-        return $this;
+        foreach ($this->filters as $filter) {
+            foreach ($values as $key => $value) {
+                $values[$key] = $filter->filter($value, $key);
+            }
+        }
+
+        return $values;
     }
 
     /**
@@ -276,7 +232,9 @@ class View implements \ArrayAccess
             throw new Exception('A template asset has not been assigned.');
         }
 
-        $this->filterData();
+        if ($this->hasFilters()) {
+            $this->data = $this->filter($this->data);
+        }
 
         $this->output = $this->template->render($this->data);
         return $this->output;
@@ -353,7 +311,6 @@ class View implements \ArrayAccess
      *
      * @param  mixed $offset
      * @param  mixed $value
-     * @throws Exception
      * @return mixed
      */
     public function offsetSet($offset, $value)
@@ -376,30 +333,11 @@ class View implements \ArrayAccess
      * ArrayAccess offsetUnset
      *
      * @param  mixed $offset
-     * @throws Exception
      * @return void
      */
     public function offsetUnset($offset)
     {
         $this->__unset($offset);
-    }
-
-    /**
-     * Filter data
-     *
-     * @return void
-     */
-    protected function filterData()
-    {
-        if (count($this->filters) > 0) {
-            foreach ($this->data as $key => $value) {
-                foreach ($this->filters as $filter) {
-                    $params = array_merge([$value], $filter['params']);
-                    $value  = call_user_func_array($filter['call'], $params);
-                }
-                $this->data[$key] = $value;
-            }
-        }
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace Pop\View\Test;
 
+use Pop\Filter\Filter;
 use Pop\View\View;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +24,24 @@ class ViewTest extends TestCase
         $this->assertTrue(is_array($view->getData()));
         $this->assertEquals('Hello World', $view->title);
         $this->assertEquals('This is a test.', $view['content']);
+    }
+    public function testRenderWithFilter()
+    {
+        $view = new View(__DIR__ . '/tmp/index.phtml', [
+            'title'   => '<b>Hello World</b>',
+            'content' => 'This is a test.'
+        ], new Filter('strip_tags'));
+        $contents = $view->render();
+        $this->assertNotContains('<b>Hello World</b>', $contents);
+    }
+    public function testRenderWithFilters()
+    {
+        $view = new View(__DIR__ . '/tmp/index.phtml', [
+            'title'   => '<b>Hello World</b>',
+            'content' => 'This is a test.'
+        ], [new Filter('strip_tags')]);
+        $contents = $view->render();
+        $this->assertNotContains('<b>Hello World</b>', $contents);
     }
 
     public function testSetTemplate()
@@ -51,10 +70,10 @@ class ViewTest extends TestCase
         $view = new View(null, [
             'title' => '"Hello <script>World</script>"',
         ]);
-        $view->addFilter('strip_tags');
-        $view->addFilter('htmlentities', ENT_QUOTES);
+        $view->addFilter(new Filter('strip_tags'));
+        $view->addFilter(new Filter('htmlentities', ENT_QUOTES));
 
-        $view->filter();
+        $view->setData($view->filter($view->getData()));
         $this->assertEquals('&quot;Hello World&quot;', $view->title);
     }
 
@@ -63,27 +82,13 @@ class ViewTest extends TestCase
         $view = new View(null, [
             'title' => '"Hello <script>World</script>"',
         ]);
-        $view->addFilter('strip_tags');
+        $view->addFilter(new Filter('strip_tags'));
         $view->addFilters([
-            [
-                'call'   => 'htmlentities',
-                'params' => [ENT_QUOTES, 'UTF-8']
-            ]
+            new Filter('htmlentities', [ENT_QUOTES, 'UTF-8'])
         ]);
 
-        $view->filter();
+        $view->setData($view->filter($view->getData()));
         $this->assertEquals('&quot;Hello World&quot;', $view->title);
-    }
-
-    public function testAddFiltersException()
-    {
-        $this->expectException('Pop\View\Exception');
-        $view = new View();
-        $view->addFilters([
-            [
-                'params' => [ENT_QUOTES, 'UTF-8']
-            ]
-        ]);
     }
 
     public function testClearFilters()
@@ -91,16 +96,11 @@ class ViewTest extends TestCase
         $view = new View(null, [
             'title' => '"Hello <script>World</script>"',
         ]);
-        $view->addFilter('strip_tags');
-        $view->addFilters([
-            [
-                'call'   => 'htmlentities',
-                'params' => [ENT_QUOTES, 'UTF-8']
-            ]
-        ]);
+
+        $view->addFilter(new Filter('strip_tags'));
+        $view->addFilter(new Filter('htmlentities', ENT_QUOTES));
 
         $view->clearFilters();
-        $view->filter();
         $this->assertEquals('"Hello <script>World</script>"', $view->title);
     }
 
