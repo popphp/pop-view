@@ -13,7 +13,7 @@
  */
 namespace Pop\View;
 
-use Pop\Filter\AbstractFilterable;
+use Pop\Filter\FilterableTrait;
 
 /**
  * View class
@@ -25,8 +25,10 @@ use Pop\Filter\AbstractFilterable;
  * @license    http://www.popphp.org/license     New BSD License
  * @version    3.2.0
  */
-class View extends AbstractFilterable implements \ArrayAccess
+class View implements \ArrayAccess
 {
+
+    use FilterableTrait;
 
     /**
      * View template object
