@@ -50,7 +50,7 @@ class ViewTest extends TestCase
         $this->assertInstanceOf('Pop\View\Template\Stream', $view->getTemplate());
     }
 
-    public function testSetData()
+    public function testSetData1()
     {
         $view = new View();
         $view->foo   = 'bar';
@@ -63,6 +63,13 @@ class ViewTest extends TestCase
         unset($view['baz']);
         $this->assertFalse(isset($view->foo));
         $this->assertFalse(isset($view['baz']));
+    }
+
+    public function testSetData2()
+    {
+        $view = new View();
+        $view->set('foo', 'bar');
+        $this->assertEquals('bar', $view->get('foo'));
     }
 
     public function testAddFilter()
