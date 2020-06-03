@@ -209,14 +209,18 @@ class View extends Utils\ArrayObject
     /**
      * Filter values
      *
-     * @param  array $values
-     * @return array
+     * @param  mixed $values
+     * @return mixed
      */
-    public function filter(array $values)
+    public function filter($values)
     {
         foreach ($this->filters as $filter) {
-            foreach ($values as $key => $value) {
-                $values[$key] = $filter->filter($value, $key);
+            if (is_array($values)) {
+                foreach ($values as $key => $value) {
+                    $values[$key] = $filter->filter($value, $key);
+                }
+            } else {
+                $values = $filter->filter($values);
             }
         }
 
