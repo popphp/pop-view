@@ -1,7 +1,7 @@
 pop-view
 ========
 
-[![Build Status](https://travis-ci.org/popphp/pop-view.svg?branch=master)](https://travis-ci.org/popphp/pop-view)
+[![Build Status](https://github.com/popphp/pop-view/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-view/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-view)](http://cc.popphp.org/pop-view/)
 
 OVERVIEW

@@ -11,7 +11,7 @@ class StreamTest extends TestCase
     public function testSetTemplate()
     {
         $template = new Stream(file_get_contents(__DIR__ . '/tmp/iteration.html'));
-        $this->assertContains('<title>[{title}]</title>', $template->getTemplate());
+        $this->assertStringContainsString('<title>[{title}]</title>', $template->getTemplate());
         $this->assertTrue($template->isString());
         $this->assertFalse($template->isFile());
     }
@@ -24,10 +24,10 @@ class StreamTest extends TestCase
             'foo'   => ['bar' => 123],
             'baz'   => 456
         ]);
-        $this->assertContains('<p>world</p>', $render);
-        $this->assertContains('<p>123</p>', $render);
-        $this->assertContains('<p>456</p>', $render);
-        $this->assertContains('<p></p>', $render);
+        $this->assertStringContainsString('<p>world</p>', $render);
+        $this->assertStringContainsString('<p>123</p>', $render);
+        $this->assertStringContainsString('<p>456</p>', $render);
+        $this->assertStringContainsString('<p></p>', $render);
     }
 
     public function testIteration()
@@ -40,9 +40,9 @@ class StreamTest extends TestCase
                 'baz'   => 123
             ]
         ]);
-        $this->assertContains('<div><strong>hello</strong>: world</div>', $render);
-        $this->assertContains('<div><strong>foo</strong>: bar</div>', $render);
-        $this->assertContains('<div><strong>baz</strong>: 123</div>', $render);
+        $this->assertStringContainsString('<div><strong>hello</strong>: world</div>', $render);
+        $this->assertStringContainsString('<div><strong>foo</strong>: bar</div>', $render);
+        $this->assertStringContainsString('<div><strong>baz</strong>: 123</div>', $render);
     }
 
     public function testNestedIteration()
@@ -57,9 +57,9 @@ class StreamTest extends TestCase
                 ]
             ]
         ]);
-        $this->assertContains('<div><strong>hello</strong>: world</div>', $render);
-        $this->assertContains('<div><strong>foo</strong>: bar</div>', $render);
-        $this->assertContains('<div><strong>baz</strong>: 123</div>', $render);
+        $this->assertStringContainsString('<div><strong>hello</strong>: world</div>', $render);
+        $this->assertStringContainsString('<div><strong>foo</strong>: bar</div>', $render);
+        $this->assertStringContainsString('<div><strong>baz</strong>: 123</div>', $render);
     }
 
     public function testArrays1()
@@ -97,9 +97,9 @@ class StreamTest extends TestCase
             ]
 
         ]);
-        $this->assertContains('<h4>Title #1 (1)</h4>', $render);
-        $this->assertContains('<p>foo : bar  (1)</p>', $render);
-        $this->assertContains('<p>something-else (2)</p>', $render);
+        $this->assertStringContainsString('<h4>Title #1 (1)</h4>', $render);
+        $this->assertStringContainsString('<p>foo : bar  (1)</p>', $render);
+        $this->assertStringContainsString('<p>something-else (2)</p>', $render);
     }
 
     public function testArrays2()
@@ -123,8 +123,8 @@ class StreamTest extends TestCase
             ]
 
         ]);
-        $this->assertContains('<p>bar</p>', $render);
-        $this->assertContains('<p>baz</p>', $render);
+        $this->assertStringContainsString('<p>bar</p>', $render);
+        $this->assertStringContainsString('<p>baz</p>', $render);
     }
 
     public function testArrays3()
@@ -148,36 +148,36 @@ class StreamTest extends TestCase
             ]
 
         ]);
-        $this->assertContains('<p>bar</p>', $render);
-        $this->assertContains('<p>baz</p>', $render);
+        $this->assertStringContainsString('<p>bar</p>', $render);
+        $this->assertStringContainsString('<p>baz</p>', $render);
     }
 
     public function testConditionalSet()
     {
         $template = new Stream(__DIR__ . '/tmp/conditional.html');
         $render = $template->render(['foo' => ['bar' => 123]]);
-        $this->assertContains("<p>The variable 'foo' is set to 123.</p>", $render);
+        $this->assertStringContainsString("<p>The variable 'foo' is set to 123.</p>", $render);
     }
 
     public function testConditionalNotSet()
     {
         $template = new Stream(__DIR__ . '/tmp/conditional.html');
         $render = $template->render(['baz' => 123]);
-        $this->assertNotContains("<p>The variable 'foo' is set to bar.</p>", $render);
+        $this->assertStringNotContainsString("<p>The variable 'foo' is set to bar.</p>", $render);
     }
 
     public function testConditionalElseSet()
     {
         $template = new Stream(__DIR__ . '/tmp/conditional-else.html');
         $render = $template->render(['foo' => 'bar']);
-        $this->assertContains("<p>The variable 'foo' is set to bar.</p>", $render);
+        $this->assertStringContainsString("<p>The variable 'foo' is set to bar.</p>", $render);
     }
 
     public function testConditionalElseNotSet()
     {
         $template = new Stream(__DIR__ . '/tmp/conditional-else.html');
         $render = $template->render(['baz' => 123]);
-        $this->assertContains("<p>The variable 'foo' is not set.</p>", $render);
+        $this->assertStringContainsString("<p>The variable 'foo' is not set.</p>", $render);
     }
 
     public function testIncludes()
@@ -187,11 +187,11 @@ class StreamTest extends TestCase
             'title'   => 'Hello World',
             'content' => 'This is a test'
         ]);
-        $this->assertContains('<title>Hello World</title>', $render);
-        $this->assertContains('<header>This is the header</header>', $render);
-        $this->assertContains('<h1>Hello World</h1>', $render);
-        $this->assertContains('<p>This is a test</p>', $render);
-        $this->assertContains('<footer>This is the footer</footer>', $render);
+        $this->assertStringContainsString('<title>Hello World</title>', $render);
+        $this->assertStringContainsString('<header>This is the header</header>', $render);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $render);
+        $this->assertStringContainsString('<p>This is a test</p>', $render);
+        $this->assertStringContainsString('<footer>This is the footer</footer>', $render);
     }
 
     public function testInheritance()
@@ -201,10 +201,10 @@ class StreamTest extends TestCase
             'title'   => 'Hello World',
             'content' => 'This is a test'
         ]);
-        $this->assertContains('<title>Hello World</title>', $render);
-        $this->assertContains('<h1>Hello World</h1>', $render);
-        $this->assertContains('<p>This is a test</p>', $render);
-        $this->assertContains('body { margin: 0; padding: 0; color: #bbb;}', $render);
+        $this->assertStringContainsString('<title>Hello World</title>', $render);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $render);
+        $this->assertStringContainsString('<p>This is a test</p>', $render);
+        $this->assertStringContainsString('body { margin: 0; padding: 0; color: #bbb;}', $render);
         $blocks = $template->getBlocks();
         $this->assertTrue(isset($blocks['header']));
         $template->setBlocks($blocks);

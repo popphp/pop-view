@@ -32,7 +32,7 @@ class ViewTest extends TestCase
             'content' => 'This is a test.'
         ], new Filter('strip_tags'));
         $contents = $view->render();
-        $this->assertNotContains('<b>Hello World</b>', $contents);
+        $this->assertStringNotContainsString('<b>Hello World</b>', $contents);
     }
     public function testRenderWithFilters()
     {
@@ -41,7 +41,7 @@ class ViewTest extends TestCase
             'content' => 'This is a test.'
         ], [new Filter('strip_tags')]);
         $contents = $view->render();
-        $this->assertNotContains('<b>Hello World</b>', $contents);
+        $this->assertStringNotContainsString('<b>Hello World</b>', $contents);
     }
 
     public function testSetTemplate()
@@ -136,14 +136,14 @@ class ViewTest extends TestCase
 
         $string = (string)$view;
 
-        $this->assertContains('<title>Hello World</title>', $result);
-        $this->assertContains('<h1>Hello World</h1>', $result);
-        $this->assertContains('<p>This is a test.</p>', $result);
+        $this->assertStringContainsString('<title>Hello World</title>', $result);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $result);
+        $this->assertStringContainsString('<p>This is a test.</p>', $result);
 
-        $this->assertContains('<title>Hello World</title>', $string);
-        $this->assertContains('<h1>Hello World</h1>', $string);
-        $this->assertContains('<p>This is a test.</p>', $string);
-        $this->assertContains('<p>This is a test.</p>', $view->getOutput());
+        $this->assertStringContainsString('<title>Hello World</title>', $string);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $string);
+        $this->assertStringContainsString('<p>This is a test.</p>', $string);
+        $this->assertStringContainsString('<p>This is a test.</p>', $view->getOutput());
     }
 
     public function testRenderException()
