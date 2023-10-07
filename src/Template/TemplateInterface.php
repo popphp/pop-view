@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\View\Template;
  * @category   Pop
  * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.3.0
+ * @version    4.0.0
  */
 interface TemplateInterface
 {
@@ -31,7 +31,7 @@ interface TemplateInterface
      *
      * @return string
      */
-    public function getTemplate();
+    public function getTemplate(): string;
 
     /**
      * Set view template
@@ -39,15 +39,14 @@ interface TemplateInterface
      * @param  string $template
      * @return TemplateInterface
      */
-    public function setTemplate($template);
+    public function setTemplate(string $template): TemplateInterface;
 
     /**
      * Render the view and return the output
      *
      * @param  array $data
-     * @throws Exception
      * @return string
      */
-    public function render(array $data);
+    public function render(array $data): string;
 
 }

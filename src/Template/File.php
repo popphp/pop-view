@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\View\Template;
  * @category   Pop
  * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.3.0
+ * @version    4.0.0
  */
 class File extends AbstractTemplate
 {
@@ -33,7 +33,7 @@ class File extends AbstractTemplate
      *
      * @param  string $template
      */
-    public function __construct($template)
+    public function __construct(string $template)
     {
         $this->setTemplate($template);
     }
@@ -43,9 +43,9 @@ class File extends AbstractTemplate
      *
      * @param  string $template
      * @throws Exception
-     * @return File
+     * @return static
      */
-    public function setTemplate($template)
+    public function setTemplate(string $template): static
     {
         if (!file_exists($template)) {
             throw new Exception("Error: The template file '" . $template . "' does not exist.");
@@ -58,12 +58,13 @@ class File extends AbstractTemplate
     /**
      * Render the view and return the output
      *
-     * @param  array $data
+     * @param  ?array $data
+     * @throws \Exception
      * @return string
      */
-    public function render(array $data = null)
+    public function render(?array $data = null): string
     {
-        if (null !== $data) {
+        if ($data !== null) {
             $this->data = $data;
         }
         $this->renderTemplate();
@@ -73,12 +74,11 @@ class File extends AbstractTemplate
     /**
      * Render view template file
      *
-     * @throws \Exception
      * @return void
      */
-    protected function renderTemplate()
+    protected function renderTemplate(): void
     {
-        if (null !== $this->data) {
+        if ($this->data !== null) {
             foreach ($this->data as $key => $value) {
                 ${$key} = $value;
             }

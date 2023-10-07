@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,51 +19,51 @@ namespace Pop\View\Template;
  * @category   Pop
  * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.3.0
+ * @version    4.0.0
  */
 class Stream extends AbstractTemplate
 {
 
     /**
      * View template file
-     * @var string
+     * @var ?string
      */
-    protected $file = null;
+    protected ?string $file = null;
 
     /**
      * View parent template
-     * @var Stream
+     * @var ?Stream
      */
-    protected $parent = null;
+    protected ?Stream $parent = null;
 
     /**
      * Block templates
      * @var array
      */
-    protected $blocks = [];
+    protected array $blocks = [];
 
     /**
      * Master template
-     * @var string
+     * @var ?string
      */
-    protected $master = null;
+    protected ?string $master = null;
 
     /**
      * Master block templates
      * @var array
      */
-    protected $masterBlocks = [];
+    protected array $masterBlocks = [];
 
     /**
      * Constructor
      *
      * Instantiate the view stream template object
      *
-     * @param  string $template
+     * @param string $template
      */
-    public function __construct($template)
+    public function __construct(string $template)
     {
         $this->setTemplate($template);
 
@@ -81,9 +81,9 @@ class Stream extends AbstractTemplate
      * Set view template with auto-detect
      *
      * @param  string $template
-     * @return Stream
+     * @return static
      */
-    public function setTemplate($template)
+    public function setTemplate(string $template): static
     {
         if ((strlen($template) <= 255) && file_exists($template)) {
             $this->template = file_get_contents($template);
@@ -98,9 +98,9 @@ class Stream extends AbstractTemplate
      * Set master
      *
      * @param  string $master
-     * @return Stream
+     * @return static
      */
-    public function setMaster($master)
+    public function setMaster(string $master): static
     {
         $this->master = $master;
         return $this;
@@ -111,7 +111,7 @@ class Stream extends AbstractTemplate
      *
      * @return array
      */
-    public function getBlocks()
+    public function getBlocks(): array
     {
         return $this->blocks;
     }
@@ -120,11 +120,11 @@ class Stream extends AbstractTemplate
      * Get block by name
      *
      * @param  string $name
-     * @return string
+     * @return string|null
      */
-    public function getBlock($name)
+    public function getBlock(string $name): string|null
     {
-        return (isset($this->blocks[$name])) ? $this->blocks[$name] : null;
+        return $this->blocks[$name] ?? null;
     }
 
     /**
@@ -132,7 +132,7 @@ class Stream extends AbstractTemplate
      *
      * @return array
      */
-    public function getMasterBlocks()
+    public function getMasterBlocks(): array
     {
         return $this->masterBlocks;
     }
@@ -141,20 +141,20 @@ class Stream extends AbstractTemplate
      * Get master block by name
      *
      * @param  string $name
-     * @return string
+     * @return string|null
      */
-    public function getMasterBlock($name)
+    public function getMasterBlock(string $name): string|null
     {
-        return (isset($this->masterBlocks[$name])) ? $this->masterBlocks[$name] : null;
+        return $this->masterBlocks[$name] ?? null;
     }
 
     /**
      * Set blocks
      *
      * @param  array $blocks
-     * @return Stream
+     * @return static
      */
-    public function setBlocks(array $blocks)
+    public function setBlocks(array $blocks): static
     {
         $this->blocks = $blocks;
         return $this;
@@ -165,9 +165,9 @@ class Stream extends AbstractTemplate
      *
      * @param  string $name
      * @param  string $value
-     * @return Stream
+     * @return static
      */
-    public function setBlock($name, $value)
+    public function setBlock($name, $value): static
     {
         $this->blocks[$name] = $value;
         return $this;
@@ -177,9 +177,9 @@ class Stream extends AbstractTemplate
      * Set master blocks
      *
      * @param  array $blocks
-     * @return Stream
+     * @return static
      */
-    public function setMasterBlocks(array $blocks)
+    public function setMasterBlocks(array $blocks): static
     {
         $this->masterBlocks = $blocks;
         return $this;
@@ -190,9 +190,9 @@ class Stream extends AbstractTemplate
      *
      * @param  string $name
      * @param  string $value
-     * @return Stream
+     * @return static
      */
-    public function setMasterBlock($name, $value)
+    public function setMasterBlock(string $name, string $value): static
     {
         $this->masterBlocks[$name] = $value;
         return $this;
@@ -201,9 +201,9 @@ class Stream extends AbstractTemplate
     /**
      * Get parent
      *
-     * @return Stream
+     * @return static|null
      */
-    public function getParent()
+    public function getParent(): static|null
     {
         return $this->parent;
     }
@@ -213,7 +213,7 @@ class Stream extends AbstractTemplate
      *
      * @return string
      */
-    public function getMaster()
+    public function getMaster(): string
     {
         return $this->master;
     }
@@ -221,32 +221,32 @@ class Stream extends AbstractTemplate
     /**
      * Determine if the template stream is from a file
      *
-     * @return boolean
+     * @return bool
      */
-    public function isFile()
+    public function isFile(): bool
     {
-        return (null !== $this->file);
+        return ($this->file !== null);
     }
 
     /**
      * Determine if the template stream is from a string
      *
-     * @return boolean
+     * @return bool
      */
-    public function isString()
+    public function isString(): bool
     {
-        return (null === $this->file);
+        return ($this->file === null);
     }
 
     /**
      * Render the view and return the output
      *
-     * @param  array $data
+     * @param  ?array $data
      * @return string
      */
-    public function render(array $data = null)
+    public function render(?array $data = null): string
     {
-        if (null !== $data) {
+        if ($data !== null) {
             $this->data = $data;
         }
         $this->renderTemplate();
@@ -258,7 +258,7 @@ class Stream extends AbstractTemplate
      *
      * @return void
      */
-    protected function parseParent()
+    protected function parseParent(): void
     {
         $matches = [];
         preg_match_all('/\{\{\@extends(.*?)\}\}/s', $this->template, $matches);
@@ -280,7 +280,7 @@ class Stream extends AbstractTemplate
      *
      * @return void
      */
-    protected function parseIncludes()
+    protected function parseIncludes(): void
     {
         $matches = [];
         preg_match_all('/\{\{\@include(.*?)\}\}/s', $this->template, $matches);
@@ -302,7 +302,7 @@ class Stream extends AbstractTemplate
      *
      * @return void
      */
-    protected function parseBlocks()
+    protected function parseBlocks(): void
     {
         $matches = [];
         preg_match_all('/\{\{(.*?)\{\{\/(.*?)\}\}/s', $this->template, $matches);
@@ -319,12 +319,12 @@ class Stream extends AbstractTemplate
 
         $parent = $this->parent;
 
-        if (null === $parent) {
+        if ($parent === null) {
             $this->setMaster($this->template);
             $this->setMasterBlocks($this->blocks);
         }
 
-        while (null !== $parent) {
+        while ($parent !== null) {
             $this->setMaster($parent->getMaster());
             $this->setMasterBlocks($parent->getMasterBlocks());
 
@@ -350,9 +350,9 @@ class Stream extends AbstractTemplate
      *
      * @return void
      */
-    protected function renderTemplate()
+    protected function renderTemplate(): void
     {
-        if (null !== $this->data) {
+        if ($this->data !== null) {
             $this->output = $this->template;
 
             // Parse array values

@@ -98,6 +98,20 @@ class ViewTest extends TestCase
         $this->assertEquals('&quot;Hello World&quot;', $view->title);
     }
 
+    public function testSingleFilters()
+    {
+        $view = new View(null, [
+            'title' => '"Hello <script>World</script>"',
+        ]);
+        $view->addFilter(new Filter('strip_tags'));
+        $view->addFilters([
+            new Filter('htmlentities', [ENT_QUOTES, 'UTF-8'])
+        ]);
+
+        $values = $view->filter('"Hello <script>World</script>"');
+        $this->assertEquals('&quot;Hello World&quot;', $values[0]);
+    }
+
     public function testClearFilters()
     {
         $view = new View(null, [

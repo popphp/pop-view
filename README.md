@@ -20,6 +20,12 @@ Install `pop-view` using Composer.
 
     composer require popphp/pop-view
 
+Or, require it in your composer.json file
+
+    "require": {
+        "popphp/pop-view" : "4.0.*"
+    }
+
 ## BASIC USAGE
 
 * [Using a PHP-file template](#using-a-php-file-template)

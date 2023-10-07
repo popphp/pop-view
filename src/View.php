@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -22,9 +22,9 @@ use Pop\Utils;
  * @category   Pop
  * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.3.0
+ * @version    4.0.0
  */
 class View extends Utils\ArrayObject
 {
@@ -33,40 +33,40 @@ class View extends Utils\ArrayObject
 
     /**
      * View template object
-     * @var Template\TemplateInterface
+     * @var ?Template\TemplateInterface
      */
-    protected $template = null;
+    protected ?Template\TemplateInterface $template = null;
 
     /**
      * Model data
-     * @var array
+     * @var mixed
      */
-    protected $data = [];
+    protected mixed $data = [];
 
     /**
      * View output string
-     * @var string
+     * @var ?string
      */
-    protected $output = null;
+    protected ?string $output = null;
 
     /**
      * Constructor
      *
      * Instantiate the view object
      *
-     * @param  mixed $template
-     * @param  array $data
-     * @param  mixed $filters
+     * @param  mixed  $template
+     * @param  ?array $data
+     * @param  mixed  $filters
      */
-    public function __construct($template = null, array $data = null, $filters = null)
+    public function __construct(mixed $template = null, ?array $data = null, mixed $filters = null)
     {
-        if (null !== $template) {
+        if ($template !== null) {
             $this->setTemplate($template);
         }
-        if (null !== $data) {
+        if ($data !== null) {
             parent::__construct($data);
         }
-        if (null !== $filters) {
+        if ($filters !== null) {
             if (is_array($filters)) {
                 $this->addFilters($filters);
             } else {
@@ -78,11 +78,11 @@ class View extends Utils\ArrayObject
     /**
      * Has a view template
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasTemplate()
+    public function hasTemplate(): bool
     {
-        return (null !== $this->template);
+        return ($this->template !== null);
     }
 
     /**
@@ -90,7 +90,7 @@ class View extends Utils\ArrayObject
      *
      * @return Template\TemplateInterface
      */
-    public function getTemplate()
+    public function getTemplate(): Template\TemplateInterface
     {
         return $this->template;
     }
@@ -100,7 +100,7 @@ class View extends Utils\ArrayObject
      *
      * @return string
      */
-    public function getOutput()
+    public function getOutput(): string
     {
         return $this->output;
     }
@@ -108,21 +108,21 @@ class View extends Utils\ArrayObject
     /**
      * Is view template a file
      *
-     * @return boolean
+     * @return bool
      */
-    public function isFile()
+    public function isFile(): bool
     {
-        return ((null !== $this->template) && ($this->template instanceof Template\File));
+        return (($this->template !== null) && ($this->template instanceof Template\File));
     }
 
     /**
      * Is view template a stream
      *
-     * @return boolean
+     * @return bool
      */
-    public function isStream()
+    public function isStream(): bool
     {
-        return ((null !== $this->template) && ($this->template instanceof Template\Stream));
+        return (($this->template !== null) && ($this->template instanceof Template\Stream));
     }
 
     /**
@@ -130,7 +130,7 @@ class View extends Utils\ArrayObject
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
@@ -141,24 +141,24 @@ class View extends Utils\ArrayObject
      * @param  string $key
      * @return mixed
      */
-    public function get($key)
+    public function get(string $key): mixed
     {
-        return (isset($this->data[$key])) ? $this->data[$key] : null;
+        return $this->data[$key] ?? null;
     }
 
     /**
      * Set view template
      *
      * @param  mixed $template
-     * @return View
+     * @return static
      */
-    public function setTemplate($template)
+    public function setTemplate(mixed $template): static
     {
         if (!($template instanceof Template\TemplateInterface)) {
             // If a native PHP file template
-            if (((substr($template, -6) == '.phtml') ||
+            if (((str_ends_with($template, '.phtml')) ||
                     (substr($template, -5, 4) == '.php') ||
-                    (substr($template, -4) == '.php')) && (strlen($template) <= 255) && (file_exists($template))) {
+                    (str_ends_with($template, '.php'))) && (strlen($template) <= 255) && (file_exists($template))) {
                 $template = new Template\File($template);
             // If a string template, or a string template from a non-PHP file
             } else {
@@ -173,9 +173,9 @@ class View extends Utils\ArrayObject
      * Set all model data
      *
      * @param  array $data
-     * @return View
+     * @return static
      */
-    public function setData(array $data = [])
+    public function setData(array $data = []): static
     {
         $this->data = $data;
         return $this;
@@ -186,9 +186,9 @@ class View extends Utils\ArrayObject
      *
      * @param  string $name
      * @param  mixed  $value
-     * @return View
+     * @return static
      */
-    public function set($name, $value)
+    public function set(string $name, mixed $value): static
     {
         $this->data[$name] = $value;
         return $this;
@@ -198,9 +198,9 @@ class View extends Utils\ArrayObject
      * Merge new model data
      *
      * @param  array $data
-     * @return View
+     * @return static
      */
-    public function merge(array $data)
+    public function merge(array $data): static
     {
         $this->data = array_merge($this->data, $data);
         return $this;
@@ -210,9 +210,9 @@ class View extends Utils\ArrayObject
      * Filter values
      *
      * @param  mixed $values
-     * @return mixed
+     * @return array
      */
-    public function filter($values)
+    public function filter(mixed $values): array
     {
         foreach ($this->filters as $filter) {
             if (is_array($values)) {
@@ -220,7 +220,7 @@ class View extends Utils\ArrayObject
                     $values[$key] = $filter->filter($value, $key);
                 }
             } else {
-                $values = $filter->filter($values);
+                $values = [$filter->filter($values)];
             }
         }
 
@@ -230,12 +230,12 @@ class View extends Utils\ArrayObject
     /**
      * Render the view
      *
-     * @throws Exception
-     * @return mixed
+     * @throws Exception|Template\Exception
+     * @return ?string
      */
-    public function render()
+    public function render(): ?string
     {
-        if (null === $this->template) {
+        if ($this->template === null) {
             throw new Exception('A template asset has not been assigned.');
         }
 
@@ -252,7 +252,7 @@ class View extends Utils\ArrayObject
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->render();
     }

@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -19,37 +19,37 @@ namespace Pop\View\Template;
  * @category   Pop
  * @package    Pop\View
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.3.0
+ * @version    4.0.0
  */
 abstract class AbstractTemplate implements TemplateInterface
 {
 
     /**
      * View template
-     * @var string
+     * @var ?string
      */
-    protected $template = null;
+    protected ?string $template = null;
 
     /**
      * View data
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * View output string
-     * @var string
+     * @var ?string
      */
-    protected $output = null;
+    protected ?string $output = null;
 
     /**
      * Get view template
      *
      * @return string
      */
-    public function getTemplate()
+    public function getTemplate(): string
     {
         return $this->template;
     }
@@ -60,22 +60,21 @@ abstract class AbstractTemplate implements TemplateInterface
      * @param  string $template
      * @return AbstractTemplate
      */
-    abstract public function setTemplate($template);
+    abstract public function setTemplate(string $template): AbstractTemplate;
 
     /**
      * Render the view and return the output
      *
      * @param  array $data
-     * @throws Exception
      * @return string
      */
-    abstract public function render(array $data);
+    abstract public function render(array $data): string;
 
     /**
      * Render view template file
      *
      * @return void
      */
-    abstract protected function renderTemplate();
+    abstract protected function renderTemplate(): void;
 
 }
