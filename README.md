@@ -290,4 +290,3 @@ echo $view;
 ```
 
 [Top](#basic-usage)
-
