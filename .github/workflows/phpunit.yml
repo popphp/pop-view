@@ -23,6 +23,9 @@ jobs:
       #- name: Validate composer.json and composer.lock
       #  run: composer validate
 
+      - name: Clear Cache
+        run: composer clear-cache
+
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v3
@@ -34,7 +37,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: composer clear-cache && composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress --no-suggest
 
       # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
       # Docs: https://getcomposer.org/doc/articles/scripts.md
