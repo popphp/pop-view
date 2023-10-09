@@ -210,9 +210,9 @@ class View extends Utils\ArrayObject
      * Filter values
      *
      * @param  mixed $values
-     * @return array
+     * @return mixed
      */
-    public function filter(mixed $values): array
+    public function filter(mixed $values): mixed
     {
         foreach ($this->filters as $filter) {
             if (is_array($values)) {
