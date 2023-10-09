@@ -289,5 +289,4 @@ $view = new View(new Stream('index.html'), $data);
 echo $view;
 ```
 
-
 [Top](#basic-usage)
