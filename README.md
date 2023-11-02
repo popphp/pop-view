@@ -10,12 +10,12 @@ pop-view
 * [Overview](#overview)
 * [Install](#install)
 * [Quickstart](#quickstart)
-* [Using a PHP-file template](#using-a-php-file-template)
-* [Using a basic stream template](#using-a-basic-stream-template)
-* [Includes with a stream template](#includes-with-a-stream-template)
-* [Inheritance with a stream template](#inheritance-with-a-stream-template)
-* [Iteration over an array with a stream template](#iteration-over-an-array-with-a-stream-template)
-* [Conditional logic with a stream template](#conditional-logic-with-a-stream-template)
+* [File Template](#file-template)
+* [Stream Template](#stream-template)
+    - [Includes](#includes)
+    - [Inheritance](#inheritance)
+    - [Iteration](#iteration)
+    - [Conditionals](#conditionals)
 
 Overview
 --------
@@ -80,7 +80,8 @@ which will produce:
 
 [Top](#pop-view)
 
-### Using a PHP-file template
+File Template
+-------------
 
 A file template simply uses PHP variables to deliver the data and content to template to be rendered.
 With a file template, you have full access to the PHP environment to write any additional code or
@@ -117,7 +118,9 @@ echo $view;
 
 [Top](#pop-view)
 
-### Using a basic stream template
+
+Stream Template
+---------------
 
 A stream template uses a formatted string placeholder to deliver the data and content to template to be rendered:
 
@@ -153,7 +156,9 @@ echo $view;
 
 [Top](#pop-view)
 
-### Includes with a stream template
+### Includes
+
+Stream templates support includes to allow you to include other templates within them.
 
 ##### header.html
 
@@ -206,7 +211,9 @@ echo $view;
 
 [Top](#pop-view)
 
-### Inheritance with a stream template
+### Inheritance
+
+Stream templates support inheritance to allow you to extend other templates.
 
 ##### parent.html
 
@@ -259,7 +266,9 @@ echo $view;
 
 [Top](#pop-view)
 
-### Iteration over an array with a stream template
+### Iteration
+
+Iteration is possible in stream templates when working with arrays and array-like objects.
 
 ```html
 <!-- index.html //-->
@@ -301,7 +310,9 @@ echo $view;
 
 [Top](#pop-view)
 
-### Conditional logic with a stream template
+### Conditionals
+
+Conditional logic is possible within a stream template as well.
 
 ```html
 <!-- index.html //-->
