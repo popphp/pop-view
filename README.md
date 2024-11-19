@@ -4,7 +4,6 @@ pop-view
 [![Build Status](https://github.com/popphp/pop-view/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-view/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-view)](http://cc.popphp.org/pop-view/)
 
-[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
 [![Join the chat at https://discord.gg/TZjgT74U7E](https://media.popphp.org/img/discord.svg)](https://discord.gg/TZjgT74U7E)
 
 * [Overview](#overview)
@@ -24,7 +23,7 @@ independently as well. It supports using both PHP-file based templates and strea
 Within the stream templates, there is basic support for logic and iteration for dynamic
 control over the view template.
 
-`pop-view` is a component of the [Pop PHP Framework](http://www.popphp.org/).
+`pop-view` is a component of the [Pop PHP Framework](https://www.popphp.org/).
 
 [Top](#pop-view)
 
