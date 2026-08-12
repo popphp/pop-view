@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -19,9 +19,9 @@ namespace Pop\View\Template;
  * @category   Pop
  * @package    Pop\View
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.0.4
+ * @version    5.0.0
  */
 class File extends AbstractTemplate
 {
@@ -88,8 +88,14 @@ class File extends AbstractTemplate
             ob_start();
             include $this->template;
             $this->output = ob_get_clean();
-        } catch (\Exception $e) {
-            ob_clean();
+        } catch (\Throwable $e) {
+            // ob_end_clean() (not ob_clean()) is required here: ob_clean() only empties the buffer's
+            // contents but leaves it on PHP's output-buffer stack, so a caller that catches this
+            // exception and continues execution is left with a dangling output buffer that silently
+            // swallows subsequent unrelated output. Catching \Throwable (not \Exception) matters too -
+            // a raw PHP/PHTML template can throw an Error (e.g. a typo'd function call), which would
+            // otherwise skip this cleanup entirely and leak the buffer via a different path.
+            ob_end_clean();
             throw $e;
         }
     }

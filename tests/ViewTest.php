@@ -112,6 +112,19 @@ class ViewTest extends TestCase
         $this->assertEquals('&quot;Hello World&quot;', $values[0]);
     }
 
+    public function testFilterExcludesByName()
+    {
+        $view = new View(null, [
+            'title'   => '<b>Hello</b>',
+            'content' => '<b>World</b>',
+        ]);
+        $view->addFilter(new Filter('strip_tags', null, 'content'));
+
+        $filtered = $view->filter($view->getData());
+        $this->assertEquals('Hello', $filtered['title']);
+        $this->assertEquals('<b>World</b>', $filtered['content']);
+    }
+
     public function testClearFilters()
     {
         $view = new View(null, [
