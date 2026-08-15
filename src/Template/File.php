@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -78,10 +79,8 @@ class File extends AbstractTemplate
      */
     protected function renderTemplate(): void
     {
-        if ($this->data !== null) {
-            foreach ($this->data as $key => $value) {
-                ${$key} = $value;
-            }
+        foreach ($this->data as $key => $value) {
+            ${$key} = $value;
         }
 
         try {

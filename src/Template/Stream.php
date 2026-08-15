@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -220,9 +221,9 @@ class Stream extends AbstractTemplate
     /**
      * Get parent
      *
-     * @return static|null
+     * @return self|null
      */
-    public function getParent(): static|null
+    public function getParent(): self|null
     {
         return $this->parent;
     }
@@ -330,7 +331,7 @@ class Stream extends AbstractTemplate
         $matches = [];
         preg_match_all('/\{\{\@extends(.*?)\}\}/s', $this->template, $matches);
 
-        if (isset($matches[0]) && isset($matches[0][0])) {
+        if (isset($matches[0][0])) {
             foreach ($matches[0] as $key => $match) {
                 $tmpl = trim($matches[1][$key]);
                 self::assertSafeTemplatePath($tmpl);
@@ -354,7 +355,7 @@ class Stream extends AbstractTemplate
         $matches = [];
         preg_match_all('/\{\{\@include(.*?)\}\}/s', $this->template, $matches);
 
-        if (isset($matches[0]) && isset($matches[0][0])) {
+        if (isset($matches[0][0])) {
             foreach ($matches[0] as $key => $match) {
                 $tmpl = trim($matches[1][$key]);
                 self::assertSafeTemplatePath($tmpl);
@@ -397,7 +398,7 @@ class Stream extends AbstractTemplate
         $matches = [];
         preg_match_all('/\{\{(.*?)\{\{\/(.*?)\}\}/s', $this->template, $matches);
 
-        if (isset($matches[0]) && isset($matches[0][0])) {
+        if (isset($matches[0][0])) {
             foreach ($matches[0] as $match) {
                 $name    = substr($match, 2);
                 $name    = substr($name, 0, strpos($name, '}}'));
@@ -442,18 +443,16 @@ class Stream extends AbstractTemplate
      */
     protected function renderTemplate(): void
     {
-        if ($this->data !== null) {
-            $this->output = $this->template;
+        $this->output = $this->template;
 
-            // Parse array values
-            $this->output = Stream\Parser::parseArrays($this->template, $this->data, $this->output);
+        // Parse array values
+        $this->output = Stream\Parser::parseArrays($this->template, $this->data, $this->output);
 
-            // Parse conditionals
-            $this->output = Stream\Parser::parseConditionals($this->template, $this->data, $this->output);
+        // Parse conditionals
+        $this->output = Stream\Parser::parseConditionals($this->template, $this->data, $this->output);
 
-            // Parse scalar values
-            $this->output = Stream\Parser::parseScalars($this->data, $this->output);
-        }
+        // Parse scalar values
+        $this->output = Stream\Parser::parseScalars($this->data, $this->output);
     }
 
     /**

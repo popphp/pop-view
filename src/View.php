@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -217,7 +218,7 @@ class View extends Utils\ArrayObject
         foreach ($this->filters as $filter) {
             if (is_array($values)) {
                 foreach ($values as $key => $value) {
-                    $values[$key] = $filter->filter($value, $key);
+                    $values[$key] = $filter->filter($value, (string)$key);
                 }
             } else {
                 $values = [$filter->filter($values)];
