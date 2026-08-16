@@ -57,57 +57,72 @@ class Parser
                     $loopCode = substr($template, strpos($template, $start));
                     $loopCode = substr($loopCode, 0, (strpos($loopCode, $end) + strlen($end)));
 
-                    $outputLoop = '';
-                    $i = 0;
-                    foreach ($value as $ky => $val) {
-                        $loop = str_replace($start, '', $loopCode);
-                        $loop = str_replace($end, '', $loop);
-                        if (str_contains($loop, '[{if(')) {
-                            $matches = [];
-                            preg_match_all('/\[{if/mi', $loop, $matches, PREG_OFFSET_CAPTURE);
+                    // The marker-stripped loop body and the boundaries/variable names of any in-loop
+                    // [{if(...)}] block are identical for every row (only the per-row truthiness check
+                    // and substituted value differ), so both are derived once here instead of on every
+                    // iteration of the row loop below.
+                    $strippedLoopCode = str_replace($start, '', $loopCode);
+                    $strippedLoopCode = str_replace($end, '', $strippedLoopCode);
 
-                            if (isset($matches[0][0])) {
-                                foreach ($matches[0] as $match) {
-                                    $cond = substr($loop, $match[1]);
-                                    $cond = substr($cond, 0, strpos($cond, '[{/if}]') + 7);
-                                    $var  = substr($cond, strpos($cond, '(') + 1);
-                                    $var  = substr($var, 0, strpos($var, ')'));
-                                    // If var is an array
-                                    if (str_contains($var, '[')) {
-                                        $index  = substr($var, (strpos($var, '[') + 1));
-                                        $index  = substr($index, 0, strpos($index, ']'));
-                                        $var    = substr($var, 0, strpos($var, '['));
-                                        $varSet = (!empty($val[$var][$index]));
-                                    } else {
-                                        $index  = null;
-                                        $varSet = (!empty($val[$var]));
-                                    }
-                                    if (str_contains($cond, '[{else}]')) {
-                                        if ($varSet) {
-                                            $code = substr($cond, (strpos($cond, ')}]') + 3));
-                                            $code = substr($code, 0, strpos($code, '[{else}]'));
-                                            $code = ($index !== null) ?
-                                                str_replace('[{' . $var . '[' . $index . ']}]', self::stringifyReplace($val[$var][$index]), $code) :
-                                                str_replace('[{' . $var . '}]', self::stringifyReplace($val[$var]), $code);
-                                            $loop = str_replace($cond, $code, $loop);
-                                        } else {
-                                            $code = substr($cond, (strpos($cond, '[{else}]') + 8));
-                                            $code = substr($code, 0, strpos($code, '[{/if}]'));
-                                            $loop = str_replace($cond, $code, $loop);
-                                        }
-                                    } else {
-                                        if ($varSet) {
-                                            $code = substr($cond, (strpos($cond, ')}]') + 3));
-                                            $code = substr($code, 0, strpos($code, '[{/if}]'));
-                                            $code = ($index !== null) ?
-                                                str_replace('[{' . $var . '[' . $index . ']}]', self::stringifyReplace($val[$var][$index]), $code) :
-                                                str_replace('[{' . $var . '}]', self::stringifyReplace($val[$var]), $code);
-                                            $loop = str_replace($cond, $code, $loop);
-                                        } else {
-                                            $loop = str_replace($cond, '', $loop);
-                                        }
-                                    }
+                    $ifBlocks = [];
+                    if (str_contains($strippedLoopCode, '[{if(')) {
+                        $matches = [];
+                        preg_match_all('/\[{if/mi', $strippedLoopCode, $matches, PREG_OFFSET_CAPTURE);
+
+                        if (isset($matches[0][0])) {
+                            foreach ($matches[0] as $match) {
+                                $cond = substr($strippedLoopCode, $match[1]);
+                                $cond = substr($cond, 0, strpos($cond, '[{/if}]') + 7);
+                                $var  = substr($cond, strpos($cond, '(') + 1);
+                                $var  = substr($var, 0, strpos($var, ')'));
+                                // If var is an array
+                                if (str_contains($var, '[')) {
+                                    $index = substr($var, (strpos($var, '[') + 1));
+                                    $index = substr($index, 0, strpos($index, ']'));
+                                    $var   = substr($var, 0, strpos($var, '['));
+                                } else {
+                                    $index = null;
                                 }
+                                if (str_contains($cond, '[{else}]')) {
+                                    $then = substr($cond, (strpos($cond, ')}]') + 3));
+                                    $then = substr($then, 0, strpos($then, '[{else}]'));
+                                    $else = substr($cond, (strpos($cond, '[{else}]') + 8));
+                                    $else = substr($else, 0, strpos($else, '[{/if}]'));
+                                } else {
+                                    $then = substr($cond, (strpos($cond, ')}]') + 3));
+                                    $then = substr($then, 0, strpos($then, '[{/if}]'));
+                                    $else = null;
+                                }
+                                $ifBlocks[] = [
+                                    'cond'  => $cond,
+                                    'var'   => $var,
+                                    'index' => $index,
+                                    'then'  => $then,
+                                    'else'  => $else,
+                                ];
+                            }
+                        }
+                    }
+
+                    $outputLoop = '';
+                    $i     = 0;
+                    $total = count($value);
+                    foreach ($value as $ky => $val) {
+                        $loop = $strippedLoopCode;
+                        foreach ($ifBlocks as $ifBlock) {
+                            $varSet = ($ifBlock['index'] !== null) ?
+                                (!empty($val[$ifBlock['var']][$ifBlock['index']])) :
+                                (!empty($val[$ifBlock['var']]));
+
+                            if ($varSet) {
+                                $code = ($ifBlock['index'] !== null) ?
+                                    str_replace('[{' . $ifBlock['var'] . '[' . $ifBlock['index'] . ']}]', self::stringifyReplace($val[$ifBlock['var']][$ifBlock['index']]), $ifBlock['then']) :
+                                    str_replace('[{' . $ifBlock['var'] . '}]', self::stringifyReplace($val[$ifBlock['var']]), $ifBlock['then']);
+                                $loop = str_replace($ifBlock['cond'], $code, $loop);
+                            } elseif ($ifBlock['else'] !== null) {
+                                $loop = str_replace($ifBlock['cond'], $ifBlock['else'], $loop);
+                            } else {
+                                $loop = str_replace($ifBlock['cond'], '', $loop);
                             }
                         }
 
@@ -166,7 +181,7 @@ class Parser
                             }
                         }
                         $i++;
-                        if ($i < count($value)) {
+                        if ($i < $total) {
                             $outputLoop .= PHP_EOL;
                         }
                     }
