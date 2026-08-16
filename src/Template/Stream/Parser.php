@@ -134,7 +134,7 @@ class Parser
                                     // Check is value is stringable
                                     if ((is_object($v) && method_exists($v, '__toString')) ||
                                         (!is_object($v) && !is_array($v))) {
-                                        $oLoop = str_replace('[{' . $k . '}]', $v, $oLoop);
+                                        $oLoop = str_replace('[{' . $k . '}]', (string)$v, $oLoop);
                                     }
                                 }
                                 if (str_contains($oLoop, '[{i}]')) {

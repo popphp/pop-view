@@ -526,20 +526,29 @@ class StreamTest extends TestCase
 
     public function testCachedRenderMatchesUncachedForNamedFieldRowLoop()
     {
+        // Regression test: a named-field row loop with a non-string field value (an integer id being
+        // the common case) used to throw a TypeError from Parser::parseArrays() under strict_types=1,
+        // since that one field-substitution call site passed the raw field value into str_replace()'s
+        // $replace parameter without a string cast.
         $data = [
             'title'    => 'Page Title',
             'sitename' => 'My Site',
             'rows'     => [
-                ['title' => 'Title #1', 'content' => 'Content #1'],
-                ['title' => 'Title #2', 'content' => 'Content #2'],
-                ['title' => 'Title #3', 'content' => 'Content #3'],
+                ['id' => 1, 'title' => 'Title #1', 'content' => 'Content #1'],
+                ['id' => 2, 'title' => 'Title #2', 'content' => 'Content #2'],
+                ['id' => 3, 'title' => 'Title #3', 'content' => 'Content #3'],
             ],
         ];
 
         $uncached = new Stream(__DIR__ . '/tmp/rows-simple.html');
         $cached   = new Stream(__DIR__ . '/tmp/rows-simple.html', $this->cacheDir);
 
-        $this->assertSame($uncached->render($data), $cached->render($data));
+        $uncachedRender = $uncached->render($data);
+
+        $this->assertStringContainsString('ID: 1', $uncachedRender);
+        $this->assertStringContainsString('ID: 2', $uncachedRender);
+        $this->assertStringContainsString('ID: 3', $uncachedRender);
+        $this->assertSame($uncachedRender, $cached->render($data));
     }
 
     public function testCachedRenderMatchesUncachedForArrays2()
